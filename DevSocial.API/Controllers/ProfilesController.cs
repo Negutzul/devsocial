@@ -35,6 +35,7 @@ namespace DevSocial.API.Controllers
                 Bio = user.Bio,
                 GitHubUrl = user.GitHubUrl,
                 LinkedInUrl = user.LinkedInUrl,
+                ProfilePictureUrl = user.ProfilePictureUrl ?? "/images/default-profile.png",
                 CreatedAt = user.CreatedAt,
                 LastActive = user.LastActive
             };
@@ -63,6 +64,7 @@ namespace DevSocial.API.Controllers
                 Bio = user.Bio,
                 GitHubUrl = user.GitHubUrl,
                 LinkedInUrl = user.LinkedInUrl,
+                ProfilePictureUrl = user.ProfilePictureUrl ?? "/images/default-profile.png",
                 CreatedAt = user.CreatedAt,
                 LastActive = user.LastActive
             };
@@ -80,6 +82,7 @@ namespace DevSocial.API.Controllers
                     Bio = u.Bio,
                     GitHubUrl = u.GitHubUrl,
                     LinkedInUrl = u.LinkedInUrl,
+                    ProfilePictureUrl = u.ProfilePictureUrl ?? "/images/default-profile.png",
                     CreatedAt = u.CreatedAt,
                     LastActive = u.LastActive
                 })

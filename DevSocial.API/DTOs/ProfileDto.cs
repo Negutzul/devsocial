@@ -7,6 +7,7 @@ namespace DevSocial.API.DTOs
         public string Bio { get; set; }
         public string GitHubUrl { get; set; }
         public string LinkedInUrl { get; set; }
+        public string ProfilePictureUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? LastActive { get; set; }
     }
