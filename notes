@@ -1,7 +1,3 @@
-User Profile Enhancement
-    Profile picture upload and management
-    Portfolio links and project showcase
-    Following/followers system
 Post Enhancement
     Code syntax highlighting
     Post search functionality
@@ -39,3 +35,34 @@ API Enhancements
     Better error handling
     API documentation improvements
     Caching layer
+
+Project Hosting Features
+    Allow users to upload and host their web applications
+    Support for static sites (HTML, CSS, JS)
+    Support for full-stack applications
+    Automatic deployment from Git repositories
+    Custom domain support
+    Environment variables management
+    Build and deployment logs
+Project Showcase
+    Live demo links
+    Screenshots/gallery
+    Tech stack display
+    Project description and features
+    Installation/usage instructions
+    Live statistics (visitors, uptime)
+    Comments and feedback section
+Project Management
+    Version control
+    Multiple environments (dev, staging, prod)
+    Team collaboration
+    Access control
+    Resource monitoring
+    Backup and restore
+Project Discovery
+    Browse projects by category
+    Search by tech stack
+    Filter by popularity/activity
+    Featured projects section
+    Trending projects
+    Similar projects recommendations
