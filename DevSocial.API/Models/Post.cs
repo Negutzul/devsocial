@@ -6,7 +6,6 @@ namespace DevSocial.API.Models
     public class Post
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
         [Required]
@@ -17,13 +16,9 @@ namespace DevSocial.API.Models
         
         public string? CodeSnippet { get; set; }
         
-        public string? Language { get; set; }
+        public string? CodeLanguage { get; set; }
         
-        public string? Link { get; set; }
-        
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        
-        public DateTime? UpdatedAt { get; set; }
+        public string? ImageUrl { get; set; }
         
         [Required]
         public string AuthorId { get; set; }
@@ -31,8 +26,14 @@ namespace DevSocial.API.Models
         [ForeignKey("AuthorId")]
         public ApplicationUser Author { get; set; }
         
-        public ICollection<Like> Likes { get; set; } = new List<Like>();
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        
+        public DateTime? UpdatedAt { get; set; }
         
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        
+        public ICollection<PostLike> Likes { get; set; } = new List<PostLike>();
+        
+        public ICollection<PostTag> Tags { get; set; } = new List<PostTag>();
     }
 } 
