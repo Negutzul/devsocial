@@ -12,17 +12,18 @@ namespace DevSocial.API.Data
         }
 
         public DbSet<Post> Posts { get; set; }
-        public DbSet<Like> Likes { get; set; }
+        public DbSet<PostLike> PostLikes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<UserFollow> UserFollows { get; set; }
+        public DbSet<PostTag> PostTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             // Configure unique constraint for likes (one like per user per post)
-            builder.Entity<Like>()
+            builder.Entity<PostLike>()
                 .HasIndex(l => new { l.UserId, l.PostId })
                 .IsUnique();
 
