@@ -1,0 +1,17 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <!-- Logo and Brand -->
+    <div class="navbar-brand">
+      <a routerLink="/" class="logo">DevSocial</a>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <div class="navbar-links" [class.active]="isMenuOpen">
+      <a routerLink="/feed" routerLinkActive="active">Feed</a>
+      <a routerLink="/explore" router LinkActive="active">Explore</a>
+      <a routerLink="/messages" routerLinkActive="active">Messages</a>
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+      
+    </div>
+  </div>
+</nav>
