@@ -8,9 +8,10 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative;
 }
 
-.content-area {
+.content {
   flex: 1;
   min-height: 70vh;
   padding: 2rem;
@@ -18,6 +19,9 @@
   margin: 0;
   width: 100%;
   box-sizing: border-box;
+  margin-top: 15vh; /* Height of navbar */
+  margin-bottom: 15vh; /* Height of footer */
+  overflow-y: auto;
 }
 
 .content-placeholder {
