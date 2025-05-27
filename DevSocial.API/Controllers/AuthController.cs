@@ -39,9 +39,9 @@ namespace DevSocial.API.Controllers
                 DisplayName = registerDto.DisplayName,
                 Email = registerDto.Email,
                 UserName = registerDto.Email,
-                Bio = registerDto.Bio,
-                GitHubUrl = registerDto.GitHubUrl,
-                LinkedInUrl = registerDto.LinkedInUrl
+                Bio = registerDto.Bio ?? string.Empty,
+                GitHubUrl = registerDto.GitHubUrl ?? string.Empty,
+                LinkedInUrl = registerDto.LinkedInUrl ?? string.Empty
             };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);

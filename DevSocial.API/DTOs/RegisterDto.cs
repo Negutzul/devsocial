@@ -16,8 +16,8 @@ namespace DevSocial.API.DTOs
         [StringLength(100, MinimumLength = 6)]
         public string Password { get; set; }
 
-        public string Bio { get; set; }
-        public string GitHubUrl { get; set; }
-        public string LinkedInUrl { get; set; }
+        public string? Bio { get; set; }
+        public string? GitHubUrl { get; set; }
+        public string? LinkedInUrl { get; set; }
     }
 } 
