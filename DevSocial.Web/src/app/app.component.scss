@@ -14,14 +14,10 @@
 .content {
   flex: 1;
   min-height: 70vh;
-  padding: 2rem;
-  background-color: #ffffff;
-  margin: 0;
-  width: 100%;
-  box-sizing: border-box;
   margin-top: 15vh; /* Height of navbar */
   margin-bottom: 15vh; /* Height of footer */
   overflow-y: auto;
+  background-color: #f9fafb;
 }
 
 .content-placeholder {
