@@ -5,13 +5,19 @@
       <a routerLink="/" class="logo">DevSocial</a>
     </div>
 
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" (click)="toggleMenu()" [class.active]="isMenuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
     <!-- Desktop Navigation -->
     <div class="navbar-links" [class.active]="isMenuOpen">
       <a routerLink="/feed" routerLinkActive="active">Feed</a>
-      <a routerLink="/explore" router LinkActive="active">Explore</a>
+      <a routerLink="/explore" routerLinkActive="active">Explore</a>
       <a routerLink="/messages" routerLinkActive="active">Messages</a>
       <a routerLink="/profile" routerLinkActive="active">Profile</a>
-      
     </div>
   </div>
 </nav>
