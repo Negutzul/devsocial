@@ -1,4 +1,10 @@
 import { Injectable } from '@angular/core';
+import { jwtDecode } from 'jwt-decode';
+
+interface JwtPayload {
+  exp?: number;
+  [key: string]: any;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +20,25 @@ export class TokenService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    if (!token) return null;
+
+    try {
+      const decodedToken = jwtDecode<JwtPayload>(token);
+      const expirationTime = decodedToken.exp ? decodedToken.exp * 1000 : 0; // Convert to milliseconds
+      
+      if (expirationTime && Date.now() >= expirationTime) {
+        // Token has expired
+        this.logout();
+        return null;
+      }
+      
+      return token;
+    } catch {
+      // If token is invalid, remove it
+      this.logout();
+      return null;
+    }
   }
 
   removeToken(): void {
