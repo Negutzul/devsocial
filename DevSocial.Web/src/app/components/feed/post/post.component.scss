@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+// Code block styling
+pre {
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  
+  code {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+}
+
+// Tag styling
+.tag {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #bbdefb;
+  }
+}
+
+// Button hover effects
+button {
+  transition: color 0.2s;
+
+  &:hover {
+    color: #2563eb;
+  }
+}
+
+// Like button active state
+.liked {
+  color: #ef4444;
+} 
