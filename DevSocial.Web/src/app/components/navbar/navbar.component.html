@@ -14,10 +14,17 @@
 
     <!-- Desktop Navigation -->
     <div class="navbar-links" [class.active]="isMenuOpen">
-      <a routerLink="/feed" routerLinkActive="active">Feed</a>
-      <a routerLink="/explore" routerLinkActive="active">Explore</a>
-      <a routerLink="/messages" routerLinkActive="active">Messages</a>
-      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+      <ng-container *ngIf="isLoggedIn(); else authLinks">
+        <a routerLink="/feed" routerLinkActive="active">Feed</a>
+        <a routerLink="/explore" routerLinkActive="active">Explore</a>
+        <a routerLink="/messages" routerLinkActive="active">Messages</a>
+        <a routerLink="/profile" routerLinkActive="active">Profile</a>
+        <button class="logout-btn" (click)="logout()">Logout</button>
+      </ng-container>
+      <ng-template #authLinks>
+        <a routerLink="/login" routerLinkActive="active">Login</a>
+        <a routerLink="/register" routerLinkActive="active">Register</a>
+      </ng-template>
     </div>
   </div>
 </nav>

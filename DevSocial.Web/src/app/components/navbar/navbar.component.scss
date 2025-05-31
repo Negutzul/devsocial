@@ -99,6 +99,21 @@
         }
       }
     }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: #4b5563;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #ef4444;
+      }
+    }
   }
 
   .navbar-user {
@@ -151,6 +166,10 @@
       }
 
       a {
+        font-size: 1.2rem;
+      }
+
+      .logout-btn {
         font-size: 1.2rem;
       }
     }
