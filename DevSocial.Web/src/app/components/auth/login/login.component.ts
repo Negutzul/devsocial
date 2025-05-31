@@ -55,9 +55,22 @@ export class LoginComponent {
     // Call the login service
     this.authService.login(this.loginData).subscribe({
       next: (response) => {
-        // TODO: Store the token and user data
-        console.log('Login successful:', response);
-        this.router.navigate(['/feed']);
+        // Verify token was stored
+        const token = this.authService.getToken();
+        if (!token) {
+          this.emailError = 'Failed to store authentication token';
+          this.isSubmitting = false;
+          return;
+        }
+
+        // Navigate to feed
+        this.router.navigate(['/feed']).then(() => {
+          this.isSubmitting = false;
+        }).catch(error => {
+          console.error('Navigation failed:', error);
+          this.emailError = 'Login successful but navigation failed';
+          this.isSubmitting = false;
+        });
       },
       error: (error) => {
         console.error('Login failed:', error);
