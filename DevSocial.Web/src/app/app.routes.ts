@@ -17,6 +17,10 @@ export const routes: Routes = [
       {
         path: 'feed',
         loadComponent: () => import('./components/feed/feed.component').then(m => m.FeedComponent)
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent)
       }
     ]
   },

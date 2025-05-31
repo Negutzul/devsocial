@@ -1,0 +1,98 @@
+<div class="profile-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    Loading profile...
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="profile && !isLoading" class="profile-content">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-info">
+        <div class="profile-picture">
+          <img [src]="profile.profilePicture || 'assets/default-avatar.png'" alt="Profile picture">
+        </div>
+        <div class="profile-details">
+          <h1>{{ profile.fullName }}</h1>
+          <p class="username">{{ '@' + profile.username }}</p>
+          <p class="bio">{{ profile.bio }}</p>
+          <div class="profile-meta">
+            <span class="location" *ngIf="profile.location">
+              <fa-icon [icon]="faMapMarkerAlt"></fa-icon> {{ profile.location }}
+            </span>
+            <span class="join-date">
+              <fa-icon [icon]="faCalendar"></fa-icon> Joined {{ profile.joinDate | date:'MMMM yyyy' }}
+            </span>
+          </div>
+          <div class="social-links" *ngIf="profile.githubUrl || profile.linkedinUrl || profile.website">
+            <a *ngIf="profile.githubUrl" [href]="profile.githubUrl" target="_blank" class="social-link">
+              <fa-icon [icon]="faGithub"></fa-icon>
+            </a>
+            <a *ngIf="profile.linkedinUrl" [href]="profile.linkedinUrl" target="_blank" class="social-link">
+              <fa-icon [icon]="faLinkedin"></fa-icon>
+            </a>
+            <a *ngIf="profile.website" [href]="profile.website" target="_blank" class="social-link">
+              <fa-icon [icon]="faGlobe"></fa-icon>
+            </a>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <button *ngIf="isOwnProfile" class="edit-btn" (click)="onEditProfile()">
+            <fa-icon [icon]="faEdit"></fa-icon> Edit Profile
+          </button>
+          <button *ngIf="!isOwnProfile" class="follow-btn" (click)="onFollow()">
+            <fa-icon [icon]="faUserPlus"></fa-icon> Follow
+          </button>
+          <button *ngIf="!isOwnProfile" class="message-btn" (click)="onMessage()">
+            <fa-icon [icon]="faEnvelope"></fa-icon> Message
+          </button>
+          <button class="share-btn" (click)="onShare()">
+            <fa-icon [icon]="faShare"></fa-icon> Share
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Stats -->
+    <div class="profile-stats">
+      <div class="stat">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Posts</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Followers</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">0</span>
+        <span class="stat-label">Following</span>
+      </div>
+    </div>
+
+    <!-- User Information -->
+    <div class="user-info">
+      <div class="info-section" *ngIf="profile.currentRole || profile.company">
+        <h3>Work</h3>
+        <p *ngIf="profile.currentRole">{{ profile.currentRole }}</p>
+        <p *ngIf="profile.company">{{ profile.company }}</p>
+      </div>
+
+      <div class="info-section" *ngIf="profile.skills?.length">
+        <h3>Skills</h3>
+        <div class="skills-list">
+          <span class="skill-tag" *ngFor="let skill of profile.skills">{{ skill }}</span>
+        </div>
+      </div>
+
+      <div class="info-section" *ngIf="profile.email && profile.isPublic">
+        <h3>Contact</h3>
+        <p>{{ profile.email }}</p>
+      </div>
+    </div>
+  </div>
+</div> 
