@@ -1,10 +1,37 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { authGuard } from './guards/auth.guard';
+import { noAuthGuard } from './guards/no-auth.guard';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'feed', loadComponent: () => import('./components/feed/feed.component').then(m => m.FeedComponent) },
-  { path: '', redirectTo: '/login', pathMatch: 'full' }
+  {
+    path: '',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'feed',
+        pathMatch: 'full'
+      },
+      {
+        path: 'feed',
+        loadComponent: () => import('./components/feed/feed.component').then(m => m.FeedComponent)
+      }
+    ]
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [noAuthGuard]
+  },
+  {
+    path: 'register',
+    component: RegisterComponent,
+    canActivate: [noAuthGuard]
+  },
+  {
+    path: '**',
+    redirectTo: 'feed'
+  }
 ];
