@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ProfileService } from '../../services/profile.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { 
   faMapMarkerAlt, 
@@ -18,21 +19,16 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 
 interface UserProfile {
+  PortfolioUrl: any;
   id: string;
-  username: string;
-  fullName: string;
+  displayName: string;
   bio: string;
-  profilePicture: string;
-  location: string;
-  skills: string[];
-  currentRole: string;
-  company: string;
-  website: string;
+  profilePictureUrl: string | null;
+  gitHubUrl: string;
+  linkedInUrl: string;
   email: string;
-  githubUrl: string;
-  linkedinUrl: string;
-  joinDate: Date;
-  isPublic: boolean;
+  createdAt: string;
+  lastActive: string | null;
 }
 
 @Component({
@@ -42,11 +38,12 @@ interface UserProfile {
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
-export class ProfileComponent implements OnInit {
-  profile: UserProfile | null = null;
+export class ProfileComponent implements OnInit, OnChanges {
+  @Input() profile: UserProfile | null = null;
   isOwnProfile: boolean = false;
   isLoading: boolean = true;
   error: string | null = null;
+  profilePictureUrl: string = 'assets/default-avatar.svg';
 
   // Font Awesome Icons
   faMapMarkerAlt = faMapMarkerAlt;
@@ -59,37 +56,79 @@ export class ProfileComponent implements OnInit {
   faGithub = faGithub;
   faLinkedin = faLinkedin;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private profileService: ProfileService
+  ) {}
 
   ngOnInit() {
-    // TODO: Get profile data from API
     this.loadProfile();
   }
 
-  private loadProfile() {
-    // For now, we'll use mock data
-    this.profile = {
-      id: '1',
-      username: 'johndoe',
-      fullName: 'John Doe',
-      bio: 'Full-stack developer passionate about web technologies and open source.',
-      profilePicture: '',
-      location: 'New York, USA',
-      skills: ['JavaScript', 'TypeScript', 'Angular', 'Node.js', 'Python'],
-      currentRole: 'Senior Developer',
-      company: 'Tech Corp',
-      website: 'https://johndoe.dev',
-      email: 'john@example.com',
-      githubUrl: 'https://github.com/johndoe',
-      linkedinUrl: 'https://linkedin.com/in/johndoe',
-      joinDate: new Date('2024-01-01'),
-      isPublic: true
-    };
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['profile']) {
+      this.loadProfile();
+    }
+  }
 
-    // Check if this is the user's own profile
-    const currentUser = this.authService.getUserData();
-    this.isOwnProfile = currentUser?.id === this.profile.id;
+  private loadProfile() {
+    this.isLoading = true;
+    this.error = null;
+
+    if (this.profile) {
+      // If profile is provided as input, check if it's the current user's profile
+      const currentUser = this.authService.getUserData();
+      this.isOwnProfile = currentUser?.id === this.profile.id;
+      this.loadProfilePicture();
+    } else {
+      // If no profile is provided, load current user's profile
+      const currentUser = this.authService.getUserData();
+      if (currentUser) {
+        this.profile = {
+          PortfolioUrl: currentUser.portfolioUrl || '',
+          id: currentUser.id,
+          displayName: currentUser.displayName,
+          bio: currentUser.bio || '',
+          profilePictureUrl: currentUser.profilePictureUrl,
+          gitHubUrl: currentUser.gitHubUrl || '',
+          linkedInUrl: currentUser.linkedInUrl || '',
+          email: currentUser.email,
+          createdAt: currentUser.createdAt,
+          lastActive: currentUser.lastActive
+        };
+        this.isOwnProfile = true;
+        this.loadProfilePicture();
+      } else {
+        this.error = 'No user data available';
+      }
+    }
     this.isLoading = false;
+  }
+
+  private loadProfilePicture() {
+    if (!this.profile) return;
+
+    if (this.isOwnProfile) {
+      this.profileService.getCurrentUserProfilePicture().subscribe({
+        next: (response) => {
+          this.profilePictureUrl = response.url;
+        },
+        error: (error) => {
+          console.error('Error loading profile picture:', error);
+          this.profilePictureUrl = 'assets/default-avatar.svg';
+        }
+      });
+    } else {
+      this.profileService.getUserProfilePicture(this.profile.id).subscribe({
+        next: (response) => {
+          this.profilePictureUrl = response.url;
+        },
+        error: (error) => {
+          console.error('Error loading profile picture:', error);
+          this.profilePictureUrl = 'assets/default-avatar.svg';
+        }
+      });
+    }
   }
 
   onEditProfile() {

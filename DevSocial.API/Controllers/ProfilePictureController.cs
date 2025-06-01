@@ -32,6 +32,31 @@ namespace DevSocial.API.Controllers
         }
 
         [Authorize]
+        [HttpGet("current")]
+        public async Task<ActionResult<ProfilePictureResponse>> GetCurrentUserProfilePicture()
+        {
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await _userManager.FindByIdAsync(currentUserId);
+
+            if (user == null)
+                return NotFound("User not found");
+
+            return Ok(new ProfilePictureResponse { Url = user.ProfilePictureUrl ?? "/profile-pictures/default-avatar.png" });
+        }
+
+        [Authorize]
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<ProfilePictureResponse>> GetUserProfilePicture(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return NotFound("User not found");
+
+            return Ok(new ProfilePictureResponse { Url = user.ProfilePictureUrl ?? "/profile-pictures/default-avatar.png" });
+        }
+
+        [Authorize]
         [HttpPost("upload")]
         public async Task<ActionResult<string>> UploadProfilePicture(IFormFile file)
         {
@@ -97,7 +122,7 @@ namespace DevSocial.API.Controllers
                 user.ProfilePictureUrl = $"/profile-pictures/{fileName}";
                 await _userManager.UpdateAsync(user);
 
-                return Ok(new { url = user.ProfilePictureUrl });
+                return Ok(new ProfilePictureResponse { Url = user.ProfilePictureUrl });
             }
             catch (Exception ex)
             {
@@ -137,5 +162,10 @@ namespace DevSocial.API.Controllers
 
             return NoContent();
         }
+    }
+
+    public class ProfilePictureResponse
+    {
+        public string Url { get; set; }
     }
 } 

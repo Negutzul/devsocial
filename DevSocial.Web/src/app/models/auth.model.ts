@@ -20,4 +20,5 @@ export interface AuthResponse {
     profilePictureUrl: string | null;
     createdAt: string;
     lastActive: string | null;
+    portfolioUrl: string;
 } 
