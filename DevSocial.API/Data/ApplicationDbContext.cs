@@ -17,6 +17,7 @@ namespace DevSocial.API.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<UserFollow> UserFollows { get; set; }
         public DbSet<PostTag> PostTags { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -51,6 +52,19 @@ namespace DevSocial.API.Data
                 .WithMany(u => u.Followers)
                 .HasForeignKey(uf => uf.FollowingId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure message relationships
+            builder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Message>()
+                .HasOne(m => m.Recipient)
+                .WithMany()
+                .HasForeignKey(m => m.RecipientId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 } 
