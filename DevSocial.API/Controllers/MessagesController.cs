@@ -69,6 +69,7 @@ namespace DevSocial.API.Controllers
                 {
                     OtherUserId = m.SenderId == currentUserId ? m.RecipientId : m.SenderId,
                     OtherUserName = m.SenderId == currentUserId ? m.Recipient.DisplayName : m.Sender.DisplayName,
+                    OtherUserProfilePicture = m.SenderId == currentUserId ? m.Recipient.ProfilePictureUrl : m.Sender.ProfilePictureUrl,
                     LastMessage = m.Content,
                     LastMessageTime = m.SentAt
                 })
@@ -80,6 +81,7 @@ namespace DevSocial.API.Controllers
                 {
                     UserId = g.Key,
                     UserName = g.First().OtherUserName,
+                    ProfilePictureUrl = g.First().OtherUserProfilePicture,
                     LastMessage = g.First().LastMessage,
                     LastMessageTime = g.First().LastMessageTime
                 })

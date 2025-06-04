@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MessageService } from '../../../services/message.service';
 import { ProfileService } from '../../../services/profile.service';
 import { ConversationDto, ProfileDto } from '../../../models/message.model';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-conversation-list',
@@ -22,6 +22,7 @@ export class ConversationListComponent implements OnInit {
   searchResults: ProfileDto[] = [];
   showDropdown = false;
   private searchSubject = new Subject<string>();
+  private defaultAvatarPath = 'assets/default-avatar.svg';
 
   constructor(
     private messageService: MessageService,
@@ -35,7 +36,12 @@ export class ConversationListComponent implements OnInit {
       )
       .subscribe(term => {
         if (term) {
-          this.profileService.searchProfiles(term).subscribe({
+          this.profileService.searchProfiles(term).pipe(
+            map(results => results.map(user => ({
+              ...user,
+              profilePictureUrl: user.profilePictureUrl || this.defaultAvatarPath
+            })))
+          ).subscribe({
             next: (results) => {
               this.searchResults = results.slice(0, 5); // Limit to 5 results
             },

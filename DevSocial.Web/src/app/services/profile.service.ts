@@ -9,7 +9,7 @@ import { ProfileDto } from '../models/message.model';
 })
 export class ProfileService {
   private apiUrl = environment.apiUrl;
-  private baseImagePath = 'http://localhost:5285';
+  private baseImagePath = environment.apiUrl.replace('/api', '');
   private defaultAvatarPath = 'assets/default-avatar.svg';
 
   constructor(private http: HttpClient) { }
@@ -18,7 +18,9 @@ export class ProfileService {
     return this.http.get<{ url: string }>(`${this.apiUrl}/profilepicture/current`)
       .pipe(
         map(response => ({
-          url: response.url ? `${this.baseImagePath}${response.url}` : this.defaultAvatarPath
+          url: response.url && !response.url.includes('default-profile.png') 
+            ? `${this.baseImagePath}${response.url}` 
+            : this.defaultAvatarPath
         }))
       );
   }
@@ -27,7 +29,9 @@ export class ProfileService {
     return this.http.get<{ url: string }>(`${this.apiUrl}/profilepicture/${userId}`)
       .pipe(
         map(response => ({
-          url: response.url ? `${this.baseImagePath}${response.url}` : this.defaultAvatarPath
+          url: response.url && !response.url.includes('default-profile.png')
+            ? `${this.baseImagePath}${response.url}`
+            : this.defaultAvatarPath
         }))
       );
   }
@@ -50,6 +54,13 @@ export class ProfileService {
   searchProfiles(searchTerm: string): Observable<ProfileDto[]> {
     return this.http.get<ProfileDto[]>(`${this.apiUrl}/profiles/search`, {
       params: { searchTerm }
-    });
+    }).pipe(
+      map(profiles => profiles.map(profile => ({
+        ...profile,
+        profilePictureUrl: profile.profilePictureUrl && !profile.profilePictureUrl.includes('default-profile.png')
+          ? `${this.baseImagePath}${profile.profilePictureUrl}`
+          : this.defaultAvatarPath
+      })))
+    );
   }
 } 
