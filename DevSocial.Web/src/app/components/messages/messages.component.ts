@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConversationListComponent } from './conversation-list/conversation-list.component';
 import { ChatWindowComponent } from './chat-window/chat-window.component';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-messages',
@@ -22,6 +23,7 @@ import { ChatWindowComponent } from './chat-window/chat-window.component';
 export class MessagesComponent implements OnInit {
   conversations: ConversationDto[] = [];
   selectedUserId: string | null = null;
+  selectedUser: User | null = null;
   isMobileView = false;
 
   constructor(
@@ -57,8 +59,18 @@ export class MessagesComponent implements OnInit {
     });
   }
 
-  onSelectConversation(userId: string) {
+  onUserSelect(userId: string) {
     this.selectedUserId = userId;
+    // Find the user from the conversations list
+    const conversation = this.conversations.find(c => c.userId === userId);
+    if (conversation) {
+      this.selectedUser = {
+        id: conversation.userId,
+        displayName: conversation.userName,
+        photoUrl: conversation.profilePictureUrl,
+        email: '' // Email is not available in ConversationDto
+      };
+    }
   }
 
   onBackToList() {

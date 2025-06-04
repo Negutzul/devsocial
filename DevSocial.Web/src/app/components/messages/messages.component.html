@@ -1,9 +1,13 @@
 <div class="messages-container">
   <!-- Mobile back button -->
-  <div *ngIf="isMobileView && selectedUserId" class="mobile-back">
+  <div *ngIf="isMobileView && selectedUserId" class="mobile-header">
     <button (click)="onBackToList()" class="back-button">
-      <i class="fas fa-arrow-left"></i> Back to Conversations
+      <i class="fas fa-arrow-left"></i>
     </button>
+    <div class="user-info">
+      <img [src]="selectedUser?.photoUrl || 'assets/default-avatar.svg'" alt="User photo" class="user-photo">
+      <span class="user-name">{{selectedUser?.displayName}}</span>
+    </div>
   </div>
 
   <!-- Conversations List -->
@@ -11,7 +15,7 @@
     <app-conversation-list
       [conversations]="conversations"
       [selectedUserId]="selectedUserId"
-      (selectConversation)="onSelectConversation($event)">
+      (selectConversation)="onUserSelect($event)">
     </app-conversation-list>
   </div>
 
