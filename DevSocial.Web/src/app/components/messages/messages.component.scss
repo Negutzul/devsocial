@@ -1,0 +1,77 @@
+.messages-container {
+  display: flex;
+  height: calc(100vh - 64px); // Adjust based on your header height
+  background-color: #f5f5f5;
+}
+
+.conversations-list {
+  width: 30%;
+  min-width: 300px;
+  border-right: 1px solid #e0e0e0;
+  background-color: white;
+  overflow-y: auto;
+}
+
+.chat-window {
+  flex: 1;
+  background-color: white;
+  overflow-y: auto;
+}
+
+.no-chat-selected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+  
+  i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: #ccc;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
+
+.mobile-back {
+  padding: 16px;
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
+
+  .back-button {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+      color: #333;
+    }
+  }
+}
+
+// Mobile styles
+@media (max-width: 767px) {
+  .messages-container {
+    height: calc(100vh - 56px); // Adjust for mobile header
+  }
+
+  .conversations-list,
+  .chat-window {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .hidden-mobile {
+    display: none;
+  }
+} 

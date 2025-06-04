@@ -71,10 +71,16 @@ namespace DevSocial.API.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<ActionResult<List<ProfileDto>>> SearchProfiles(string searchTerm)
+        public async Task<ActionResult<List<ProfileDto>>> SearchProfiles(string? searchTerm = null)
         {
-            var users = await _context.Users
-                .Where(u => u.DisplayName.Contains(searchTerm) || u.Email.Contains(searchTerm))
+            var query = _context.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(u => u.DisplayName.Contains(searchTerm) || u.Email.Contains(searchTerm));
+            }
+
+            var users = await query
                 .Select(u => new ProfileDto
                 {
                     Id = u.Id,

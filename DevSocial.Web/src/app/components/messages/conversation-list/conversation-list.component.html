@@ -1,0 +1,43 @@
+<div class="conversation-list-container">
+  <div class="search-bar">
+    <input 
+      type="text" 
+      placeholder="Search users..." 
+      class="search-input"
+      [(ngModel)]="searchTerm"
+      (input)="onSearch()"
+      (focus)="showDropdown = true"
+      (blur)="onBlur()">
+    
+    <div class="search-dropdown" *ngIf="showDropdown && searchResults.length > 0">
+      <div 
+        class="search-result-item" 
+        *ngFor="let user of searchResults"
+        (mousedown)="startConversation(user)">
+        <img [src]="user.profilePictureUrl" [alt]="user.displayName" class="user-avatar">
+        <div class="user-info">
+          <div class="user-name">{{ user.displayName }}</div>
+          <div class="user-bio" *ngIf="user.bio">{{ user.bio }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conversations">
+    <div *ngFor="let conversation of conversations"
+         class="conversation-item"
+         [class.selected]="conversation.userId === selectedUserId"
+         (click)="onConversationSelect(conversation.userId)">
+      <div class="avatar">
+        <img [src]="conversation.profilePictureUrl || '/assets/default-avatar.svg'" alt="User avatar">
+      </div>
+      <div class="conversation-info">
+        <div class="user-name">{{ conversation.userName }}</div>
+        <div class="last-message">{{ conversation.lastMessage }}</div>
+      </div>
+      <div class="message-time">
+        {{ conversation.lastMessageTime | date:'shortTime' }}
+      </div>
+    </div>
+  </div>
+</div> 

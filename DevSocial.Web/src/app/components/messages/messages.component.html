@@ -1,0 +1,33 @@
+<div class="messages-container">
+  <!-- Mobile back button -->
+  <div *ngIf="isMobileView && selectedUserId" class="mobile-back">
+    <button (click)="onBackToList()" class="back-button">
+      <i class="fas fa-arrow-left"></i> Back to Conversations
+    </button>
+  </div>
+
+  <!-- Conversations List -->
+  <div class="conversations-list" [class.hidden-mobile]="isMobileView && selectedUserId">
+    <app-conversation-list
+      [conversations]="conversations"
+      [selectedUserId]="selectedUserId"
+      (selectConversation)="onSelectConversation($event)">
+    </app-conversation-list>
+  </div>
+
+  <!-- Chat Window -->
+  <div class="chat-window" [class.hidden-mobile]="isMobileView && !selectedUserId">
+    <ng-container *ngIf="selectedUserId; else noChatSelected">
+      <app-chat-window
+        [userId]="selectedUserId"
+        (backToList)="onBackToList()">
+      </app-chat-window>
+    </ng-container>
+    <ng-template #noChatSelected>
+      <div class="no-chat-selected">
+        <i class="fas fa-comments"></i>
+        <h2>Select a conversation to start chatting</h2>
+      </div>
+    </ng-template>
+  </div>
+</div> 

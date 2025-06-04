@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { ProfileDto } from '../models/message.model';
 
 @Injectable({
   providedIn: 'root'
@@ -44,5 +45,11 @@ export class ProfileService {
 
   removeProfilePicture(): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/profilepicture/remove`);
+  }
+
+  searchProfiles(searchTerm: string): Observable<ProfileDto[]> {
+    return this.http.get<ProfileDto[]>(`${this.apiUrl}/profiles/search`, {
+      params: { searchTerm }
+    });
   }
 } 

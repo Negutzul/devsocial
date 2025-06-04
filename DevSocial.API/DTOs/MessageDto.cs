@@ -23,5 +23,6 @@ namespace DevSocial.API.DTOs
         public string UserName { get; set; }
         public string LastMessage { get; set; }
         public DateTime LastMessageTime { get; set; }
+        public string ProfilePictureUrl { get; set; }
     }
 } 
