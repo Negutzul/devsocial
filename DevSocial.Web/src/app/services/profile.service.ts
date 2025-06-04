@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ProfileDto } from '../models/message.model';
+import { UserProfile } from '../models/user-profile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +19,7 @@ export class ProfileService {
     return this.http.get<{ url: string }>(`${this.apiUrl}/profilepicture/current`)
       .pipe(
         map(response => ({
-          url: response.url && !response.url.includes('default-profile.png') 
-            ? `${this.baseImagePath}${response.url}` 
-            : this.defaultAvatarPath
+          url: response.url ? `${this.baseImagePath}${response.url}` : this.defaultAvatarPath
         }))
       );
   }
@@ -29,9 +28,7 @@ export class ProfileService {
     return this.http.get<{ url: string }>(`${this.apiUrl}/profilepicture/${userId}`)
       .pipe(
         map(response => ({
-          url: response.url && !response.url.includes('default-profile.png')
-            ? `${this.baseImagePath}${response.url}`
-            : this.defaultAvatarPath
+          url: response.url ? `${this.baseImagePath}${response.url}` : this.defaultAvatarPath
         }))
       );
   }
@@ -57,10 +54,17 @@ export class ProfileService {
     }).pipe(
       map(profiles => profiles.map(profile => ({
         ...profile,
-        profilePictureUrl: profile.profilePictureUrl && !profile.profilePictureUrl.includes('default-profile.png')
-          ? `${this.baseImagePath}${profile.profilePictureUrl}`
-          : this.defaultAvatarPath
+        profilePictureUrl: profile.profilePictureUrl ? `${this.baseImagePath}${profile.profilePictureUrl}` : this.defaultAvatarPath
       })))
+    );
+  }
+
+  getUserProfile(userId: string): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${this.apiUrl}/profiles/${userId}`).pipe(
+      map(profile => ({
+        ...profile,
+        profilePictureUrl: profile.profilePictureUrl ? `${this.baseImagePath}${profile.profilePictureUrl}` : this.defaultAvatarPath
+      }))
     );
   }
 } 

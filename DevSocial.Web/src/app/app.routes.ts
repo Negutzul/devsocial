@@ -21,6 +21,10 @@ export const routes: Routes = [
         loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent)
       },
       {
+        path: 'profile/:userId',
+        loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent)
+      },
+      {
         path: 'messages',
         loadComponent: () => import('./components/messages/messages.component').then(m => m.MessagesComponent)
       },

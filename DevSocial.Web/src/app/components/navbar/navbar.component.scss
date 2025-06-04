@@ -36,6 +36,97 @@
     }
   }
 
+  .search-container {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+    margin: 0 2rem;
+
+    .search-input-wrapper {
+      position: relative;
+      width: 100%;
+
+      .search-input {
+        width: 100%;
+        padding: 0.5rem 2.5rem 0.5rem 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #2563eb;
+          box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+      }
+
+      .search-icon {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        font-size: 0.875rem;
+      }
+    }
+
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 0.5rem;
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1000;
+
+      .search-result-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #f3f4f6;
+        }
+
+        .user-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-right: 0.75rem;
+        }
+
+        .user-info {
+          display: flex;
+          flex-direction: column;
+
+          .user-name {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+          }
+
+          .user-bio {
+            font-size: 0.875rem;
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+          }
+        }
+      }
+    }
+  }
+
   .menu-toggle {
     display: none;
     background: none;
@@ -132,6 +223,10 @@
       }
     }
   }
+
+  .mobile-menu {
+    display: none;
+  }
 }
 
 // Mobile Responsive Design
@@ -144,11 +239,19 @@
       padding: 0 1.5rem;
     }
 
+    .desktop-search {
+      display: none;
+    }
+
     .menu-toggle {
       display: block;
     }
 
     .navbar-links {
+      display: none;
+    }
+
+    .mobile-menu {
       display: none;
       position: fixed;
       top: 0;
@@ -156,21 +259,66 @@
       right: 0;
       bottom: 0;
       background-color: #ffffff;
-      padding: 6rem 2rem 2rem;
-      flex-direction: column;
-      gap: 2rem;
+      padding: 5rem 1.5rem 2rem;
       z-index: 99;
+      overflow-y: auto;
 
       &.active {
+        display: block;
+      }
+
+      .mobile-search {
+        margin: 0 0 2rem 0;
+        max-width: none;
+
+        .search-results {
+          position: fixed;
+          top: auto;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          max-height: 50vh;
+          border-radius: 0.5rem 0.5rem 0 0;
+          box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+      }
+
+      .mobile-nav-links {
         display: flex;
-      }
+        flex-direction: column;
+        gap: 1.5rem;
 
-      a {
-        font-size: 1.2rem;
-      }
+        a {
+          color: #4b5563;
+          text-decoration: none;
+          font-weight: 500;
+          font-size: 1.2rem;
+          transition: color 0.3s ease;
 
-      .logout-btn {
-        font-size: 1.2rem;
+          &:hover {
+            color: #2563eb;
+          }
+
+          &.active {
+            color: #2563eb;
+          }
+        }
+
+        .logout-btn {
+          background: none;
+          border: none;
+          color: #4b5563;
+          font-weight: 500;
+          font-size: 1.2rem;
+          cursor: pointer;
+          padding: 0;
+          text-align: left;
+          transition: color 0.3s ease;
+
+          &:hover {
+            color: #ef4444;
+          }
+        }
       }
     }
   }

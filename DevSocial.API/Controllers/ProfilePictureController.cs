@@ -41,7 +41,7 @@ namespace DevSocial.API.Controllers
             if (user == null)
                 return NotFound("User not found");
 
-            return Ok(new ProfilePictureResponse { Url = user.ProfilePictureUrl ?? "/profile-pictures/default-avatar.png" });
+            return Ok(new ProfilePictureResponse { Url = user.ProfilePictureUrl });
         }
 
         [Authorize]
@@ -53,7 +53,7 @@ namespace DevSocial.API.Controllers
             if (user == null)
                 return NotFound("User not found");
 
-            return Ok(new ProfilePictureResponse { Url = user.ProfilePictureUrl ?? "/profile-pictures/default-avatar.png" });
+            return Ok(new ProfilePictureResponse { Url = user.ProfilePictureUrl });
         }
 
         [Authorize]

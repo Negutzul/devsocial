@@ -5,12 +5,90 @@
       <a routerLink="/" class="logo">DevSocial</a>
     </div>
 
+    <!-- Desktop Search Bar -->
+    <div class="search-container desktop-search" *ngIf="isLoggedIn()">
+      <div class="search-input-wrapper">
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="Search users..." 
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          (blur)="onSearchBlur()"
+        >
+        <i class="fas fa-search search-icon"></i>
+      </div>
+      
+      <!-- Search Results Dropdown -->
+      <div class="search-results" *ngIf="showSearchResults && searchResults.length > 0">
+        <div 
+          class="search-result-item" 
+          *ngFor="let user of searchResults"
+          (click)="onProfileClick(user.id)"
+        >
+          <img [src]="user.profilePictureUrl || 'assets/default-avatar.svg'" [alt]="user.displayName" class="user-avatar">
+          <div class="user-info">
+            <span class="user-name">{{user.displayName}}</span>
+            <span class="user-bio" *ngIf="user.bio">{{user.bio}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Hamburger Menu Button -->
     <button class="menu-toggle" (click)="toggleMenu()" [class.active]="isMenuOpen">
       <span></span>
       <span></span>
       <span></span>
     </button>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" [class.active]="isMenuOpen">
+      <!-- Mobile Search Bar -->
+      <div class="search-container mobile-search" *ngIf="isLoggedIn()">
+        <div class="search-input-wrapper">
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Search users..." 
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()"
+            (blur)="onSearchBlur()"
+          >
+          <i class="fas fa-search search-icon"></i>
+        </div>
+        
+        <!-- Search Results Dropdown -->
+        <div class="search-results" *ngIf="showSearchResults && searchResults.length > 0">
+          <div 
+            class="search-result-item" 
+            *ngFor="let user of searchResults"
+            (click)="onProfileClick(user.id)"
+          >
+            <img [src]="user.profilePictureUrl || 'assets/default-avatar.svg'" [alt]="user.displayName" class="user-avatar">
+            <div class="user-info">
+              <span class="user-name">{{user.displayName}}</span>
+              <span class="user-bio" *ngIf="user.bio">{{user.bio}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation Links -->
+      <div class="mobile-nav-links">
+        <ng-container *ngIf="isLoggedIn(); else authLinks">
+          <a routerLink="/feed" routerLinkActive="active" (click)="toggleMenu()">Feed</a>
+          <a routerLink="/explore" routerLinkActive="active" (click)="toggleMenu()">Explore</a>
+          <a routerLink="/messages" routerLinkActive="active" (click)="toggleMenu()">Messages</a>
+          <a routerLink="/profile" routerLinkActive="active" (click)="toggleMenu()">Profile</a>
+          <button class="logout-btn" (click)="logout()">Logout</button>
+        </ng-container>
+        <ng-template #authLinks>
+          <a routerLink="/login" routerLinkActive="active" (click)="toggleMenu()">Login</a>
+          <a routerLink="/register" routerLinkActive="active" (click)="toggleMenu()">Register</a>
+        </ng-template>
+      </div>
+    </div>
 
     <!-- Desktop Navigation -->
     <div class="navbar-links" [class.active]="isMenuOpen">

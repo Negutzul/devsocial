@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ProfileService } from '../../services/profile.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { UserProfile } from '../../models/user-profile.model';
 import { 
   faMapMarkerAlt, 
   faCalendar, 
@@ -17,19 +18,6 @@ import {
   faGithub, 
   faLinkedin 
 } from '@fortawesome/free-brands-svg-icons';
-
-interface UserProfile {
-  PortfolioUrl: any;
-  id: string;
-  displayName: string;
-  bio: string;
-  profilePictureUrl: string | null;
-  gitHubUrl: string;
-  linkedInUrl: string;
-  email: string;
-  createdAt: string;
-  lastActive: string | null;
-}
 
 @Component({
   selector: 'app-profile',
@@ -58,11 +46,31 @@ export class ProfileComponent implements OnInit, OnChanges {
 
   constructor(
     private authService: AuthService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    this.loadProfile();
+    this.route.params.subscribe(params => {
+      const userId = params['userId'];
+      if (userId) {
+        // Load specific user's profile
+        this.profileService.getUserProfile(userId).subscribe({
+          next: (profile) => {
+            this.profile = profile;
+            this.loadProfile();
+          },
+          error: (error) => {
+            console.error('Error loading profile:', error);
+            this.error = 'Failed to load profile';
+            this.isLoading = false;
+          }
+        });
+      } else {
+        // Load current user's profile
+        this.loadProfile();
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
