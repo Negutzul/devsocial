@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MessageService } from '../../../services/message.service';
 import { MessageResponseDto, SendMessageDto } from '../../../models/message.model';
 import { AuthService } from '../../../services/auth.service';
@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule]
 })
-export class ChatWindowComponent implements OnInit {
+export class ChatWindowComponent implements OnInit, OnChanges {
   @Input() userId!: string;
   @Output() backToList = new EventEmitter<void>();
 
@@ -33,6 +33,13 @@ export class ChatWindowComponent implements OnInit {
 
   ngOnInit() {
     this.loadMessages();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['userId'] && !changes['userId'].firstChange) {
+      this.messages = []; // Clear previous messages
+      this.loadMessages();
+    }
   }
 
   loadMessages() {
