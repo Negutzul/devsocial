@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Post } from '../../models/post.model';
 import { PostComponent } from './post/post.component';
 import { PostService } from '../../services/post.service';
@@ -12,7 +13,7 @@ import { of } from 'rxjs';
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, PostComponent],
+  imports: [CommonModule, FormsModule, PostComponent],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.scss']
 })
@@ -24,6 +25,18 @@ export class FeedComponent implements OnInit {
   pageSize: number = 10;
   hasMorePosts: boolean = true;
   feedType: 'all' | 'following' = 'all';
+
+  // Create Post Modal
+  showCreatePostModal: boolean = false;
+  isSubmitting: boolean = false;
+  newPost: Partial<Post> = {
+    title: '',
+    content: '',
+    codeSnippet: '',
+    codeLanguage: '',
+    tags: []
+  };
+  tagsInput: string = '';
 
   constructor(
     private postService: PostService,
@@ -138,5 +151,60 @@ export class FeedComponent implements OnInit {
     if (atBottom) {
       this.loadMore();
     }
+  }
+
+  // Create Post Methods
+  openCreatePostModal() {
+    this.showCreatePostModal = true;
+    this.resetForm();
+  }
+
+  closeCreatePostModal(event: Event) {
+    event.preventDefault();
+    this.showCreatePostModal = false;
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.newPost = {
+      title: '',
+      content: '',
+      codeSnippet: '',
+      codeLanguage: '',
+      tags: []
+    };
+    this.tagsInput = '';
+    this.error = null;
+  }
+
+  createPost() {
+    if (this.isSubmitting) return;
+
+    // Process tags
+    if (this.tagsInput) {
+      this.newPost.tags = this.tagsInput
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(tag => tag.length > 0);
+    }
+
+    this.isSubmitting = true;
+    this.error = null;
+
+    this.postService.createPost(this.newPost).subscribe({
+      next: (post) => {
+        console.log('Post created successfully:', post);
+        this.posts.unshift(post);
+        this.showCreatePostModal = false;
+        this.resetForm();
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Error creating post:', error);
+        this.error = error.error?.message || 'Failed to create post';
+      },
+      complete: () => {
+        this.isSubmitting = false;
+      }
+    });
   }
 } 
