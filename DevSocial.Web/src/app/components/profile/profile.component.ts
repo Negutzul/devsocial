@@ -137,9 +137,9 @@ export class ProfileComponent implements OnInit, OnChanges {
     const currentUser = this.authService.getUserData();
     if (!currentUser) return;
 
-    this.followService.getFollowers(this.profile.id).subscribe({
-      next: (followers) => {
-        this.isFollowing = followers.some(follower => follower.id === currentUser.id);
+    this.followService.isFollowing(this.profile.id).subscribe({
+      next: (isFollowing) => {
+        this.isFollowing = isFollowing;
       },
       error: (error) => {
         console.error('Error checking follow status:', error);

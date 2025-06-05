@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -29,5 +29,11 @@ export class FollowService {
 
   getFollowStats(userId: string): Observable<{ followersCount: number, followingCount: number }> {
     return this.http.get<{ followersCount: number, followingCount: number }>(`${this.apiUrl}/userfollows/stats/${userId}`);
+  }
+
+  isFollowing(userId: string): Observable<boolean> {
+    return this.http.get<{ isFollowing: boolean }>(`${this.apiUrl}/userfollows/isfollowing/${userId}`).pipe(
+      map(response => response.isFollowing)
+    );
   }
 } 

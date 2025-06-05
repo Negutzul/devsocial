@@ -79,6 +79,18 @@ namespace DevSocial.API.Controllers
         }
 
         [Authorize]
+        [HttpGet("isfollowing/{userId}")]
+        public async Task<ActionResult<IsFollowingDto>> IsFollowing(string userId)
+        {
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            var isFollowing = await _context.UserFollows
+                .AnyAsync(uf => uf.FollowerId == currentUserId && uf.FollowingId == userId);
+
+            return new IsFollowingDto { IsFollowing = isFollowing };
+        }
+
+        [Authorize]
         [HttpPost("follow/{userId}")]
         public async Task<ActionResult<UserFollowDto>> FollowUser(string userId)
         {
