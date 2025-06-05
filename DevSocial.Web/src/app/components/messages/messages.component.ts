@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from '../../services/message.service';
-import { ConversationDto } from '../../models/message.model';
+import { ConversationDto, ProfileDto } from '../../models/message.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConversationListComponent } from './conversation-list/conversation-list.component';
 import { ChatWindowComponent } from './chat-window/chat-window.component';
 import { User } from '../../models/user.model';
+import { ProfileService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-messages',
@@ -28,6 +29,7 @@ export class MessagesComponent implements OnInit {
 
   constructor(
     private messageService: MessageService,
+    private profileService: ProfileService,
     private route: ActivatedRoute
   ) {}
 
@@ -40,6 +42,7 @@ export class MessagesComponent implements OnInit {
     this.route.params.subscribe(params => {
       if (params['userId']) {
         this.selectedUserId = params['userId'];
+        this.handleNewConversation(params['userId']);
       }
     });
   }
@@ -52,11 +55,44 @@ export class MessagesComponent implements OnInit {
     this.messageService.getConversations().subscribe({
       next: (conversations) => {
         this.conversations = conversations;
+        // If we have a selected user, make sure they're in the list
+        if (this.selectedUserId) {
+          this.handleNewConversation(this.selectedUserId);
+        }
       },
       error: (error) => {
         console.error('Error loading conversations:', error);
       }
     });
+  }
+
+  private handleNewConversation(userId: string) {
+    // Check if conversation already exists
+    const existingConversation = this.conversations.find(c => c.userId === userId);
+    
+    if (existingConversation) {
+      // If conversation exists, just select it
+      this.onUserSelect(existingConversation.userId);
+    } else {
+      // If it's a new conversation, get user profile and create conversation
+      this.profileService.getUserProfile(userId).subscribe({
+        next: (profile) => {
+          const newConversation: ConversationDto = {
+            userId: profile.id,
+            userName: profile.displayName,
+            lastMessage: '',
+            lastMessageTime: new Date(),
+            profilePictureUrl: profile.profilePictureUrl || undefined
+          };
+          
+          this.conversations.unshift(newConversation);
+          this.onUserSelect(newConversation.userId);
+        },
+        error: (error) => {
+          console.error('Error loading user profile:', error);
+        }
+      });
+    }
   }
 
   onUserSelect(userId: string) {
@@ -67,7 +103,7 @@ export class MessagesComponent implements OnInit {
       this.selectedUser = {
         id: conversation.userId,
         displayName: conversation.userName,
-        photoUrl: conversation.profilePictureUrl,
+        photoUrl: conversation.profilePictureUrl || undefined,
         email: '' // Email is not available in ConversationDto
       };
     }
