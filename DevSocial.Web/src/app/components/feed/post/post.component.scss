@@ -3,128 +3,197 @@
 }
 
 .post-card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem;
-  overflow: hidden;
+  padding: 1.5rem;
 }
 
 .post-header {
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
 
-  .author-name {
-    font-weight: 600;
-    color: #1f2937;
-    margin: 0;
-    font-size: 0.95rem;
-  }
+.author-name {
+  font-weight: 500;
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 
-  .post-date {
-    font-size: 0.75rem;
-    color: #6b7280;
-    margin: 0.125rem 0 0;
+  &::before {
+    content: '@';
+    color: #9ca3af;
   }
+}
+
+.post-date {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  margin: 0;
 }
 
 .post-body {
-  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
 
-  .post-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0 0 0.5rem;
-  }
+.post-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
+}
 
-  .post-content {
-    color: #4b5563;
-    margin: 0 0 1rem;
-    line-height: 1.5;
-  }
+.post-content {
+  color: #374151;
+  margin: 0 0 1.5rem 0;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  font-size: 1.05rem;
 }
 
 .code-block {
-  margin: 1rem 0;
-  
-  pre {
-    background-color: #f8f9fa;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    overflow-x: auto;
-    
-    code {
-      font-family: 'Fira Code', monospace;
-      font-size: 0.875rem;
-      line-height: 1.5;
-    }
-  }
+  margin: 1.25rem 0;
+  background: #f3f4f6;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
 }
 
 .tags-container {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin: 1rem 0;
+  margin-top: 1.25rem;
 }
 
 .tag {
-  background-color: #e3f2fd;
-  color: #1976d2;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
+  background: #e5e7eb;
+  color: #4b5563;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
   font-size: 0.875rem;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 
   &:hover {
-    background-color: #bbdefb;
+    background: #d1d5db;
   }
 }
 
 .post-actions {
   display: flex;
-  gap: 1rem;
-  padding: 0.5rem 1rem;
+  gap: 1.5rem;
   border-top: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+  padding-top: 1.25rem;
 }
 
 .action-button {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #6b7280;
-  transition: color 0.2s;
   background: none;
   border: none;
-  padding: 0.25rem 0.5rem;
+  color: #6b7280;
   cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+  font-size: 0.95rem;
 
   &:hover {
-    color: #2563eb;
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  &.liked {
+    color: #ef4444;
   }
 
   i {
-    font-size: 1rem;
+    font-size: 1.25rem;
+  }
+}
+
+// Comments Section Styles
+.comments-section {
+  margin-top: 1.25rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.25rem;
+}
+
+.comment-form {
+  margin-bottom: 1.25rem;
+}
+
+.comment-input {
+  width: 100%;
+  padding: 0.875rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  resize: vertical;
+  margin-bottom: 0.75rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.submit-comment {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #2563eb;
   }
 
-  span {
-    font-size: 0.875rem;
+  &:disabled {
+    background: #93c5fd;
+    cursor: not-allowed;
   }
+}
+
+.comments-list {
+  margin-top: 1.25rem;
+}
+
+.loading-comments,
+.no-comments {
+  text-align: center;
+  color: #6b7280;
+  padding: 1.25rem;
+  font-size: 0.95rem;
 }
 
 // Code block styling
 pre {
   background-color: #f8f9fa;
-  border-radius: 0.5rem;
-  padding: 1rem;
+  border-radius: 8px;
+  padding: 1.25rem;
   overflow-x: auto;
+  margin: 0;
   
   code {
     font-family: 'Fira Code', monospace;
     font-size: 0.875rem;
-    line-height: 1.5;
+    line-height: 1.6;
   }
 }
 

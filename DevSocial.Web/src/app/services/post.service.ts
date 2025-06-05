@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, catchError, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Post } from '../models/post.model';
+import { Comment } from '../models/comment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -53,5 +54,19 @@ export class PostService {
 
   unlikePost(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/posts/${id}/like`);
+  }
+
+  // Comment-related methods
+  getComments(postId: number): Observable<Comment[]> {
+    const params = new HttpParams().set('postId', postId.toString());
+    return this.http.get<Comment[]>(`${this.apiUrl}/comments`, { params });
+  }
+
+  createComment(postId: number, content: string): Observable<Comment> {
+    return this.http.post<Comment>(`${this.apiUrl}/comments`, { postId, content });
+  }
+
+  deleteComment(postId: number, commentId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/comments/${commentId}`);
   }
 } 

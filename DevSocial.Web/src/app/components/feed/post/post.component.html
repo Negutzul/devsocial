@@ -29,9 +29,41 @@
       <i class="fas fa-heart"></i>
       <span>{{ post.likeCount }}</span>
     </button>
-    <button class="action-button">
+    <button class="action-button" (click)="toggleComments()">
       <i class="fas fa-comment"></i>
       <span>{{ post.commentCount }}</span>
     </button>
+  </div>
+
+  <!-- Comments Section -->
+  <div class="comments-section" *ngIf="showComments">
+    <!-- Comment Form -->
+    <div class="comment-form">
+      <textarea 
+        [(ngModel)]="newComment" 
+        placeholder="Write a comment..."
+        rows="2"
+        class="comment-input"></textarea>
+      <button 
+        (click)="submitComment()" 
+        [disabled]="!newComment.trim()"
+        class="submit-comment">
+        Post
+      </button>
+    </div>
+
+    <!-- Comments List -->
+    <div class="comments-list">
+      <div *ngIf="isLoadingComments" class="loading-comments">
+        Loading comments...
+      </div>
+      <div *ngIf="!isLoadingComments && comments.length === 0" class="no-comments">
+        No comments yet. Be the first to comment!
+      </div>
+      <app-comment 
+        *ngFor="let comment of comments" 
+        [comment]="comment">
+      </app-comment>
+    </div>
   </div>
 </div> 
