@@ -14,7 +14,9 @@
       Loading posts...
     </div>
 
-    <app-post *ngFor="let post of posts" [post]="post"></app-post>
+    <app-post *ngFor="let post of posts" 
+              [post]="post"
+              (postUpdated)="onPostUpdated($event)"></app-post>
 
     <div *ngIf="isLoading && posts.length > 0" class="loading-more">
       Loading more posts...

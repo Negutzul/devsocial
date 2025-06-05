@@ -25,8 +25,8 @@
   </div>
   
   <div class="post-actions">
-    <button class="action-button">
-      <i class="fas fa-heart" [class.text-red-500]="post.isLikedByCurrentUser"></i>
+    <button class="action-button" (click)="onLikeClick()" [class.liked]="post.isLikedByCurrentUser">
+      <i class="fas fa-heart"></i>
       <span>{{ post.likeCount }}</span>
     </button>
     <button class="action-button">

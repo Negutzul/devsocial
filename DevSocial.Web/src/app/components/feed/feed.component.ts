@@ -110,6 +110,13 @@ export class FeedComponent implements OnInit {
       });
   }
 
+  onPostUpdated(updatedPost: Post) {
+    const index = this.posts.findIndex(p => p.id === updatedPost.id);
+    if (index !== -1) {
+      this.posts[index] = updatedPost;
+    }
+  }
+
   loadMore() {
     if (this.hasMorePosts && !this.isLoading) {
       this.currentPage++;
