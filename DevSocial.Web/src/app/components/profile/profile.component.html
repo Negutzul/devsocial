@@ -1,82 +1,74 @@
-<div class="profile-container">
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="loading">
-    Loading profile...
-  </div>
-
-  <!-- Error State -->
-  <div *ngIf="error" class="error">
-    {{ error }}
-  </div>
-
-  <!-- Profile Content -->
-  <div *ngIf="profile && !isLoading" class="profile-content">
-    <!-- Profile Header -->
-    <div class="profile-header">
-      <div class="profile-info">
-        <div class="profile-picture">
-          <img [src]="profilePictureUrl" alt="Profile picture">
-        </div>
-        <div class="profile-details">
-          <h1>{{ profile.displayName }}</h1>
-          <p class="username">{{ '@' + profile.displayName }}</p>
-          <p class="bio">{{ profile.bio }}</p>
-          <div class="profile-meta">
-            <span class="join-date">
-              <fa-icon [icon]="faCalendar"></fa-icon> Joined {{ profile.createdAt| date:'MMMM yyyy' }}
-            </span>
+<div class="profile-container" *ngIf="!isLoading && profile">
+  <div class="profile-header">
+    <div class="profile-cover"></div>
+    <div class="profile-info">
+      <div class="profile-picture">
+        <img [src]="profilePictureUrl" [alt]="profile.displayName">
+      </div>
+      <div class="profile-details">
+        <h1>{{ profile.displayName }}</h1>
+        <p class="bio" *ngIf="profile.bio">{{ profile.bio }}</p>
+        <div class="profile-stats">
+          <div class="stat">
+            <span class="count">{{ followersCount }}</span>
+            <span class="label">Followers</span>
           </div>
-          <div class="social-links" *ngIf="profile.gitHubUrl || profile.linkedInUrl">
-            <a *ngIf="profile.gitHubUrl" [href]="profile.gitHubUrl" target="_blank" class="social-link">
-              <fa-icon [icon]="faGithub"></fa-icon>
-            </a>
-            <a *ngIf="profile.linkedInUrl" [href]="profile.linkedInUrl" target="_blank" class="social-link">
-              <fa-icon [icon]="faLinkedin"></fa-icon>
-            </a>
-            <a *ngIf="profile.PortfolioUrl" [href]="profile.PortfolioUrl" target="_blank" class="social-link">
-              <fa-icon [icon]="faGlobe"></fa-icon>
-            </a>
+          <div class="stat">
+            <span class="count">{{ followingCount }}</span>
+            <span class="label">Following</span>
           </div>
         </div>
         <div class="profile-actions">
-          <button *ngIf="isOwnProfile" class="edit-btn" (click)="onEditProfile()">
-            <fa-icon [icon]="faEdit"></fa-icon> Edit Profile
+          <button *ngIf="!isOwnProfile" class="action-btn follow-btn" (click)="onFollow()">
+            <fa-icon [icon]="isFollowing ? faUserMinus : faUserPlus"></fa-icon>
+            {{ isFollowing ? 'Unfollow' : 'Follow' }}
           </button>
-          <button *ngIf="!isOwnProfile" class="follow-btn" (click)="onFollow()">
-            <fa-icon [icon]="faUserPlus"></fa-icon> Follow
+          <button *ngIf="!isOwnProfile" class="action-btn message-btn" (click)="onMessage()">
+            <fa-icon [icon]="faEnvelope"></fa-icon>
+            Message
           </button>
-          <button *ngIf="!isOwnProfile" class="message-btn" (click)="onMessage()">
-            <fa-icon [icon]="faEnvelope"></fa-icon> Message
+          <button *ngIf="isOwnProfile" class="action-btn edit-btn" (click)="onEditProfile()">
+            <fa-icon [icon]="faEdit"></fa-icon>
+            Edit Profile
           </button>
-          <button class="share-btn" (click)="onShare()">
-            <fa-icon [icon]="faShare"></fa-icon> Share
+          <button class="action-btn share-btn" (click)="onShare()">
+            <fa-icon [icon]="faShare"></fa-icon>
+            Share
           </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Profile Stats -->
-    <div class="profile-stats">
-      <div class="stat">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Posts</span>
-      </div>
-      <div class="stat">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Followers</span>
-      </div>
-      <div class="stat">
-        <span class="stat-value">0</span>
-        <span class="stat-label">Following</span>
-      </div>
+  <div class="profile-content">
+    <div class="profile-links" *ngIf="profile.gitHubUrl || profile.linkedInUrl">
+      <a *ngIf="profile.gitHubUrl" [href]="profile.gitHubUrl" target="_blank" class="social-link">
+        <fa-icon [icon]="faGithub"></fa-icon>
+        GitHub
+      </a>
+      <a *ngIf="profile.linkedInUrl" [href]="profile.linkedInUrl" target="_blank" class="social-link">
+        <fa-icon [icon]="faLinkedin"></fa-icon>
+        LinkedIn
+      </a>
     </div>
 
-    <div class="user-info">
-
-      <div class="info-section" *ngIf="profile.email">
-        <h3>Contact</h3>
-        <p>{{ profile.email }}</p>
+    <div class="profile-meta">
+      <div class="meta-item" *ngIf="profile.createdAt">
+        <fa-icon [icon]="faCalendar"></fa-icon>
+        <span>Joined {{ profile.createdAt | date:'MMM yyyy' }}</span>
+      </div>
+      <div class="meta-item" *ngIf="profile.lastActive">
+        <fa-icon [icon]="faGlobe"></fa-icon>
+        <span>Last active {{ profile.lastActive | date:'MMM d, yyyy' }}</span>
       </div>
     </div>
   </div>
+</div>
+
+<div class="loading" *ngIf="isLoading">
+  Loading profile...
+</div>
+
+<div class="error" *ngIf="error">
+  {{ error }}
 </div> 

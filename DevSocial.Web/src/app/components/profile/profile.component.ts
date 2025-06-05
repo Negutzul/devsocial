@@ -1,8 +1,10 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ProfileService } from '../../services/profile.service';
+import { FollowService } from '../../services/follow.service';
+import { MessageService } from '../../services/message.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UserProfile } from '../../models/user-profile.model';
 import { 
@@ -12,7 +14,8 @@ import {
   faEdit, 
   faUserPlus, 
   faEnvelope, 
-  faShare 
+  faShare,
+  faUserMinus
 } from '@fortawesome/free-solid-svg-icons';
 import { 
   faGithub, 
@@ -32,6 +35,9 @@ export class ProfileComponent implements OnInit, OnChanges {
   isLoading: boolean = true;
   error: string | null = null;
   profilePictureUrl: string = 'assets/default-avatar.svg';
+  isFollowing: boolean = false;
+  followersCount: number = 0;
+  followingCount: number = 0;
 
   // Font Awesome Icons
   faMapMarkerAlt = faMapMarkerAlt;
@@ -39,6 +45,7 @@ export class ProfileComponent implements OnInit, OnChanges {
   faGlobe = faGlobe;
   faEdit = faEdit;
   faUserPlus = faUserPlus;
+  faUserMinus = faUserMinus;
   faEnvelope = faEnvelope;
   faShare = faShare;
   faGithub = faGithub;
@@ -47,7 +54,10 @@ export class ProfileComponent implements OnInit, OnChanges {
   constructor(
     private authService: AuthService,
     private profileService: ProfileService,
-    private route: ActivatedRoute
+    private followService: FollowService,
+    private messageService: MessageService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -55,88 +65,86 @@ export class ProfileComponent implements OnInit, OnChanges {
       const userId = params['userId'];
       if (userId) {
         // Load specific user's profile
-        this.profileService.getUserProfile(userId).subscribe({
-          next: (profile) => {
-            this.profile = profile;
-            this.loadProfile();
-          },
-          error: (error) => {
-            console.error('Error loading profile:', error);
-            this.error = 'Failed to load profile';
-            this.isLoading = false;
-          }
-        });
+        this.loadUserProfile(userId);
       } else {
         // Load current user's profile
-        this.loadProfile();
+        const currentUser = this.authService.getUserData();
+        if (currentUser?.id) {
+          this.loadUserProfile(currentUser.id);
+        } else {
+          this.error = 'User not logged in';
+          this.isLoading = false;
+        }
       }
     });
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['profile']) {
+    if (changes['profile'] && this.profile) {
       this.loadProfile();
     }
   }
 
-  private loadProfile() {
+  private loadUserProfile(userId: string) {
     this.isLoading = true;
     this.error = null;
 
-    if (this.profile) {
-      // If profile is provided as input, check if it's the current user's profile
-      const currentUser = this.authService.getUserData();
-      this.isOwnProfile = currentUser?.id === this.profile.id;
-      this.loadProfilePicture();
-    } else {
-      // If no profile is provided, load current user's profile
-      const currentUser = this.authService.getUserData();
-      if (currentUser) {
-        this.profile = {
-          PortfolioUrl: currentUser.portfolioUrl || '',
-          id: currentUser.id,
-          displayName: currentUser.displayName,
-          bio: currentUser.bio || '',
-          profilePictureUrl: currentUser.profilePictureUrl,
-          gitHubUrl: currentUser.gitHubUrl || '',
-          linkedInUrl: currentUser.linkedInUrl || '',
-          email: currentUser.email,
-          createdAt: currentUser.createdAt,
-          lastActive: currentUser.lastActive
-        };
-        this.isOwnProfile = true;
-        this.loadProfilePicture();
-      } else {
-        this.error = 'No user data available';
+    this.profileService.getUserProfile(userId).subscribe({
+      next: (profile) => {
+        this.profile = profile;
+        this.loadProfile();
+        this.loadFollowStats();
+        this.checkFollowStatus();
+      },
+      error: (error) => {
+        console.error('Error loading profile:', error);
+        this.error = 'Failed to load profile';
+        this.isLoading = false;
       }
+    });
+  }
+
+  private loadProfile() {
+    if (!this.profile) return;
+
+    const currentUser = this.authService.getUserData();
+    this.isOwnProfile = currentUser?.id === this.profile.id;
+
+    if (this.profile.profilePictureUrl) {
+      this.profilePictureUrl = this.profile.profilePictureUrl;
     }
+
     this.isLoading = false;
   }
 
-  private loadProfilePicture() {
+  private loadFollowStats() {
     if (!this.profile) return;
 
-    if (this.isOwnProfile) {
-      this.profileService.getCurrentUserProfilePicture().subscribe({
-        next: (response) => {
-          this.profilePictureUrl = response.url;
-        },
-        error: (error) => {
-          console.error('Error loading profile picture:', error);
-          this.profilePictureUrl = 'assets/default-avatar.svg';
-        }
-      });
-    } else {
-      this.profileService.getUserProfilePicture(this.profile.id).subscribe({
-        next: (response) => {
-          this.profilePictureUrl = response.url;
-        },
-        error: (error) => {
-          console.error('Error loading profile picture:', error);
-          this.profilePictureUrl = 'assets/default-avatar.svg';
-        }
-      });
-    }
+    this.followService.getFollowStats(this.profile.id).subscribe({
+      next: (stats) => {
+        this.followersCount = stats.followersCount;
+        this.followingCount = stats.followingCount;
+      },
+      error: (error) => {
+        console.error('Error loading follow stats:', error);
+      }
+    });
+  }
+
+  private checkFollowStatus() {
+    if (!this.profile || this.isOwnProfile) return;
+
+    const currentUser = this.authService.getUserData();
+    if (!currentUser) return;
+
+    this.followService.getFollowers(this.profile.id).subscribe({
+      next: (followers) => {
+        this.isFollowing = followers.some(follower => follower.id === currentUser.id);
+      },
+      error: (error) => {
+        console.error('Error checking follow status:', error);
+      }
+    });
   }
 
   onEditProfile() {
@@ -145,17 +153,58 @@ export class ProfileComponent implements OnInit, OnChanges {
   }
 
   onFollow() {
-    // TODO: Implement follow functionality
-    console.log('Follow clicked');
+    if (!this.profile || this.isOwnProfile) return;
+
+    if (this.isFollowing) {
+      this.followService.unfollowUser(this.profile.id).subscribe({
+        next: () => {
+          this.isFollowing = false;
+          this.followersCount--;
+        },
+        error: (error) => {
+          console.error('Error unfollowing user:', error);
+        }
+      });
+    } else {
+      this.followService.followUser(this.profile.id).subscribe({
+        next: () => {
+          this.isFollowing = true;
+          this.followersCount++;
+        },
+        error: (error) => {
+          console.error('Error following user:', error);
+        }
+      });
+    }
   }
 
   onMessage() {
-    // TODO: Implement message functionality
-    console.log('Message clicked');
+    if (!this.profile || this.isOwnProfile) return;
+    this.router.navigate(['/messages', this.profile.id]);
   }
 
   onShare() {
-    // TODO: Implement share functionality
-    console.log('Share clicked');
+    if (!this.profile) return;
+    
+    // Get the current URL
+    const url = window.location.href;
+    
+    // Check if the Web Share API is available
+    if (navigator.share) {
+      navigator.share({
+        title: `${this.profile.displayName}'s Profile`,
+        text: `Check out ${this.profile.displayName}'s profile on DevSocial!`,
+        url: url
+      }).catch(error => {
+        console.error('Error sharing:', error);
+      });
+    } else {
+      // Fallback: Copy to clipboard
+      navigator.clipboard.writeText(url).then(() => {
+        alert('Profile URL copied to clipboard!');
+      }).catch(error => {
+        console.error('Error copying to clipboard:', error);
+      });
+    }
   }
 } 
