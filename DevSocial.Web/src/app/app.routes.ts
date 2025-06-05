@@ -5,48 +5,43 @@ import { noAuthGuard } from './guards/no-auth.guard';
 export const routes: Routes = [
   {
     path: '',
-    canActivate: [authGuard],
-    children: [
-      {
-        path: '',
-        redirectTo: 'feed',
-        pathMatch: 'full'
-      },
-      {
-        path: 'feed',
-        loadComponent: () => import('./components/feed/feed.component').then(m => m.FeedComponent)
-      },
-      {
-        path: 'profile',
-        loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent)
-      },
-      {
-        path: 'profile/:userId',
-        loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent)
-      },
-      {
-        path: 'messages',
-        loadComponent: () => import('./components/messages/messages.component').then(m => m.MessagesComponent)
-      },
-      {
-        path: 'messages/:userId',
-        loadComponent: () => import('./components/messages/messages.component').then(m => m.MessagesComponent)
-      }
-    ]
+    redirectTo: 'feed',
+    pathMatch: 'full'
   },
   {
-    path: 'auth',
+    path: 'feed',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/feed/feed.component').then(m => m.FeedComponent)
+  },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent)
+  },
+  {
+    path: 'profile/:userId',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/profile/profile.component').then(m => m.ProfileComponent)
+  },
+  {
+    path: 'messages',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/messages/messages.component').then(m => m.MessagesComponent)
+  },
+  {
+    path: 'messages/:userId',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/messages/messages.component').then(m => m.MessagesComponent)
+  },
+  {
+    path: 'login',
     canActivate: [noAuthGuard],
-    children: [
-      {
-        path: 'login',
-        loadComponent: () => import('./components/auth/login/login.component').then(m => m.LoginComponent)
-      },
-      {
-        path: 'register',
-        loadComponent: () => import('./components/auth/register/register.component').then(m => m.RegisterComponent)
-      }
-    ]
+    loadComponent: () => import('./components/auth/login/login.component').then(m => m.LoginComponent)
+  },
+  {
+    path: 'register',
+    canActivate: [noAuthGuard],
+    loadComponent: () => import('./components/auth/register/register.component').then(m => m.RegisterComponent)
   },
   {
     path: '**',
