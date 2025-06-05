@@ -1,5 +1,31 @@
-<div class="feed-container">
+<div class="feed-container" (scroll)="onScroll($event)">
+  <div class="feed-header">
+    <button class="feed-type-toggle" (click)="toggleFeedType()">
+      {{ feedType === 'all' ? 'All Posts' : 'Following' }}
+    </button>
+  </div>
+
   <div class="feed-content">
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <div *ngIf="isLoading && posts.length === 0" class="loading-spinner">
+      Loading posts...
+    </div>
+
     <app-post *ngFor="let post of posts" [post]="post"></app-post>
+
+    <div *ngIf="isLoading && posts.length > 0" class="loading-more">
+      Loading more posts...
+    </div>
+
+    <div *ngIf="!hasMorePosts && posts.length > 0" class="no-more-posts">
+      No more posts to load
+    </div>
+
+    <div *ngIf="!isLoading && posts.length === 0" class="no-posts">
+      No posts found
+    </div>
   </div>
 </div> 
