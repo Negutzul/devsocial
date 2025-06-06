@@ -25,7 +25,7 @@ WORKDIR /app
 COPY --from=backend-publish /app/publish .
 
 # Copy the built frontend
-COPY --from=frontend-build /app/dist/DevSocial.Web /app/wwwroot
+COPY --from=frontend-build /app/dist/dev-social.web /app/wwwroot
 
 # Set environment variables
 ENV ASPNETCORE_URLS=http://+:80
