@@ -1,0 +1,21 @@
+services:
+  # Combined Frontend and Backend Service
+  - type: web
+    name: devsocial
+    env: docker
+    region: oregon
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        value: postgresql://baza_diz_user:h6mVL0bgvRCquzI0GgoYUgkP11VX7OXF@dpg-d11fhcodl3ps73cnvf1g-a.oregon-postgres.render.com/baza_diz
+      - key: ASPNETCORE_URLS
+        value: http://+:80
+
+databases:
+  - name: devsocial-db
+    databaseName: devsocial
+    user: devsocial
+    plan: free 
