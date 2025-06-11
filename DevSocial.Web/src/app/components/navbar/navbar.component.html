@@ -78,8 +78,8 @@
       <div class="mobile-nav-links">
         <ng-container *ngIf="isLoggedIn(); else authLinks">
           <a routerLink="/feed" routerLinkActive="active" (click)="toggleMenu()">Feed</a>
-          <a routerLink="/explore" routerLinkActive="active" (click)="toggleMenu()">Explore</a>
           <a routerLink="/messages" routerLinkActive="active" (click)="toggleMenu()">Messages</a>
+          <a routerLink="/dev-tools" routerLinkActive="active" (click)="toggleMenu()">Dev Tools</a>
           <a routerLink="/profile" routerLinkActive="active" (click)="toggleMenu()">Profile</a>
           <button class="logout-btn" (click)="logout()">Logout</button>
         </ng-container>
@@ -96,6 +96,7 @@
         <a routerLink="/feed" routerLinkActive="active">Feed</a>
         <a routerLink="/explore" routerLinkActive="active">Explore</a>
         <a routerLink="/messages" routerLinkActive="active">Messages</a>
+        <a routerLink="/dev-tools" routerLinkActive="active">Dev Tools</a>
         <a routerLink="/profile" routerLinkActive="active">Profile</a>
         <button class="logout-btn" (click)="logout()">Logout</button>
       </ng-container>

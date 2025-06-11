@@ -1,0 +1,29 @@
+<div class="dev-tools-container">
+  <h1 class="title">Developer Tools</h1>
+  <p class="subtitle">Powerful tools to enhance your development workflow</p>
+  
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-icon">🚀</div>
+      <h2>Host Your App</h2>
+      <p>Deploy your GitHub projects with a single click</p>
+      <button class="tool-button" (click)="openHostModal()">Get Started</button>
+    </div>
+
+    <div class="tool-card coming-soon">
+      <div class="tool-icon">⚡</div>
+      <h2>Coming Soon</h2>
+      <p>More powerful tools are on the way</p>
+      <button class="tool-button" disabled>Coming Soon</button>
+    </div>
+
+    <div class="tool-card coming-soon">
+      <div class="tool-icon">🔧</div>
+      <h2>Coming Soon</h2>
+      <p>More powerful tools are on the way</p>
+      <button class="tool-button" disabled>Coming Soon</button>
+    </div>
+  </div>
+
+  <app-host-app-modal *ngIf="showHostModal" (close)="closeHostModal()"></app-host-app-modal>
+</div> 

@@ -34,6 +34,11 @@ export const routes: Routes = [
     loadComponent: () => import('./components/messages/messages.component').then(m => m.MessagesComponent)
   },
   {
+    path: 'dev-tools',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/dev-tools/dev-tools.component').then(m => m.DevToolsComponent)
+  },
+  {
     path: 'login',
     canActivate: [noAuthGuard],
     loadComponent: () => import('./components/auth/login/login.component').then(m => m.LoginComponent)

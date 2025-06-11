@@ -50,3 +50,8 @@ To stop the database:
 ```bash
 docker-compose down
 ``` 
+
+
+
+linguist pt ai
+host pt aplicatii cu containerizare
