@@ -5,7 +5,7 @@
       <button class="close-button" (click)="onClose()">&times;</button>
     </div>
     
-    <form (ngSubmit)="onSubmit()" class="modal-form">
+    <form (ngSubmit)="onSubmit()" class="modal-form" *ngIf="!deploymentResult">
       <div class="form-group">
         <label for="githubUrl">GitHub Repository URL</label>
         <input 
@@ -30,6 +30,10 @@
         ></textarea>
       </div>
 
+      <div class="error-message" *ngIf="error">
+        {{ error }}
+      </div>
+
       <div class="form-actions">
         <button type="button" class="cancel-button" (click)="onClose()">Cancel</button>
         <button type="submit" class="submit-button" [disabled]="isSubmitting">
@@ -37,5 +41,17 @@
         </button>
       </div>
     </form>
+
+    <div class="deployment-result" *ngIf="deploymentResult">
+      <div class="success-message">
+        <h3>Deployment Successful!</h3>
+        <p>Your application is now running.</p>
+        <div class="deployment-details">
+          <p><strong>Status:</strong> {{ deploymentResult.status }}</p>
+          <p><strong>URL:</strong> <a [href]="deploymentResult.url" target="_blank">{{ deploymentResult.url }}</a></p>
+        </div>
+      </div>
+      <button class="close-button" (click)="onClose()">Close</button>
+    </div>
   </div>
 </div> 

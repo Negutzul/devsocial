@@ -120,4 +120,47 @@
 .submit-button:disabled {
   background: #bdc3c7;
   cursor: not-allowed;
+}
+
+.error-message {
+  color: #e74c3c;
+  background-color: #fde8e8;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.deployment-result {
+  padding: 1rem;
+}
+
+.success-message {
+  background-color: #e8f5e9;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.success-message h3 {
+  color: #2e7d32;
+  margin: 0 0 0.5rem 0;
+}
+
+.deployment-details {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #c8e6c9;
+}
+
+.deployment-details p {
+  margin: 0.5rem 0;
+}
+
+.deployment-details a {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.deployment-details a:hover {
+  text-decoration: underline;
 } 

@@ -51,6 +51,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 // Add TokenService
 builder.Services.AddScoped<TokenService>();
 
+// Add DeploymentService
+builder.Services.AddScoped<IDeploymentService, DeploymentService>();
+
 // Configure JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is not configured");
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("Jwt:Issuer is not configured");
