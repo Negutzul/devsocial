@@ -5,6 +5,7 @@ namespace DevSocial.API.Services
     public interface IDeploymentService
     {
         Task<DeploymentResult> DeployProject(string githubUrl, string dockerfile);
+        Task<string> GetContainerLogs(string containerId);
     }
 
     public class DeploymentResult

@@ -30,6 +30,20 @@ namespace DevSocial.API.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpGet("logs/{containerId}")]
+        public async Task<IActionResult> GetLogs(string containerId)
+        {
+            try
+            {
+                var logs = await _deploymentService.GetContainerLogs(containerId);
+                return Ok(new { logs });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 
     public class DeploymentRequest

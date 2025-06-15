@@ -323,5 +323,28 @@ CMD [""npm"", ""start""]";
                 CopyDirectory(dir, destDir);
             }
         }
+
+        public async Task<string> GetContainerLogs(string containerId)
+        {
+            try
+            {
+                var logStream = await _dockerClient.Containers.GetContainerLogsAsync(
+                    containerId,
+                    new ContainerLogsParameters
+                    {
+                        ShowStdout = true,
+                        ShowStderr = true,
+                        Timestamps = true,
+                        Follow = false
+                    });
+
+                using var reader = new StreamReader(logStream);
+                return await reader.ReadToEndAsync();
+            }
+            catch (DockerApiException ex)
+            {
+                throw new Exception($"Failed to get container logs: {ex.Message}");
+            }
+        }
     }
 } 
