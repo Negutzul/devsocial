@@ -2,6 +2,7 @@ using DevSocial.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace DevSocial.API.Controllers
 {
@@ -18,17 +19,14 @@ namespace DevSocial.API.Controllers
         }
 
         [HttpPost("deploy")]
-        public async Task<IActionResult> Deploy([FromBody] DeploymentRequest request)
+        public async Task<ActionResult<DeploymentResult>> DeployProject(DeployProjectRequest request)
         {
-            try
-            {
-                var result = await _deploymentService.DeployProject(request.GithubUrl, request.Dockerfile);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            var result = await _deploymentService.DeployProject(
+                request.GithubUrl,
+                request.Dockerfile,
+                request.PortMappings
+            );
+            return Ok(result);
         }
 
         [HttpGet("logs/{containerId}")]
@@ -60,10 +58,11 @@ namespace DevSocial.API.Controllers
         }
     }
 
-    public class DeploymentRequest
+    public class DeployProjectRequest
     {
-        public string GithubUrl { get; set; }
-        public string Dockerfile { get; set; }
+        public string GithubUrl { get; set; } = string.Empty;
+        public string Dockerfile { get; set; } = string.Empty;
+        public Dictionary<string, string> PortMappings { get; set; } = new();
     }
 
     public class CommandRequest

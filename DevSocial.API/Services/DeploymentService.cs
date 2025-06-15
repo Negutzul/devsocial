@@ -45,7 +45,7 @@ namespace DevSocial.API.Services
             }
         }
 
-        public async Task<DeploymentResult> DeployProject(string githubUrl, string dockerfile)
+        public async Task<DeploymentResult> DeployProject(string githubUrl, string dockerfile, Dictionary<string, string> portMappings)
         {
             string projectPath = null;
             string containerId = null;
@@ -80,7 +80,7 @@ namespace DevSocial.API.Services
                 // Build and run the Docker container
                 try
                 {
-                    containerId = await BuildAndRunContainer(projectPath, deploymentId);
+                    containerId = await BuildAndRunContainer(projectPath, deploymentId, portMappings, dockerfile);
                 }
                 catch (Exception ex)
                 {
@@ -135,7 +135,7 @@ namespace DevSocial.API.Services
             Repository.Clone(url, path, cloneOptions);
         }
 
-        private async Task<string> BuildAndRunContainer(string projectPath, string deploymentId)
+        private async Task<string> BuildAndRunContainer(string projectPath, string deploymentId, Dictionary<string, string> portMappings, string dockerfile)
         {
             // Read exposed ports from Dockerfile
             var dockerfilePath = Path.Combine(projectPath, "Dockerfile");
@@ -159,17 +159,9 @@ namespace DevSocial.API.Services
                 }
                 Directory.CreateDirectory(buildContextPath);
 
-                // Write the Dockerfile content directly
-                var dockerfileContent = @"FROM node:18
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 4200
-CMD [""npm"", ""start""]";
-                
+                // Write the Dockerfile content from the request
                 var newDockerfilePath = Path.Combine(buildContextPath, "Dockerfile");
-                File.WriteAllText(newDockerfilePath, dockerfileContent);
+                File.WriteAllText(newDockerfilePath, dockerfile);
                 Console.WriteLine($"Dockerfile content written to: {newDockerfilePath}");
 
                 // Verify Dockerfile exists and has content
@@ -267,12 +259,19 @@ CMD [""npm"", ""start""]";
             {
                 Image = $"devsocial-{deploymentId}:latest",
                 Name = $"devsocial-{deploymentId}",
-                ExposedPorts = exposedPorts.ToDictionary(p => p, _ => default(EmptyStruct)),
+                ExposedPorts = portMappings.Keys.ToDictionary(p => $"{p}/tcp", _ => default(EmptyStruct)),
                 HostConfig = new HostConfig
                 {
-                    PortBindings = exposedPorts.ToDictionary(
-                        p => p,
-                        p => (IList<PortBinding>)new List<PortBinding> { new PortBinding { HostPort = p } }
+                    PortBindings = portMappings.ToDictionary(
+                        kvp => $"{kvp.Key}/tcp",
+                        kvp => (IList<PortBinding>)new List<PortBinding>
+                        {
+                            new PortBinding
+                            {
+                                HostPort = kvp.Value,
+                                HostIP = "0.0.0.0"
+                            }
+                        }
                     )
                 }
             };

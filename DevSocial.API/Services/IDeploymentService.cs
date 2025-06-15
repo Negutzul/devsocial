@@ -1,10 +1,11 @@
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace DevSocial.API.Services
 {
     public interface IDeploymentService
     {
-        Task<DeploymentResult> DeployProject(string githubUrl, string dockerfile);
+        Task<DeploymentResult> DeployProject(string githubUrl, string dockerfile, Dictionary<string, string> portMappings);
         Task<string> GetContainerLogs(string containerId);
         Task<CommandResult> ExecuteCommand(string containerId, string command);
     }
