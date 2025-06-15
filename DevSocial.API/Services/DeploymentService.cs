@@ -10,6 +10,8 @@ using System.Threading;
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
+using DevSocial.API.DTOs;
+using System.Text;
 
 namespace DevSocial.API.Services
 {
@@ -328,8 +330,9 @@ namespace DevSocial.API.Services
         {
             try
             {
-                var logStream = await _dockerClient.Containers.GetContainerLogsAsync(
+                var multiplexedStream = await _dockerClient.Containers.GetContainerLogsAsync(
                     containerId,
+                    false, // tty parameter - false since we're not using TTY
                     new ContainerLogsParameters
                     {
                         ShowStdout = true,
@@ -338,8 +341,17 @@ namespace DevSocial.API.Services
                         Follow = false
                     });
 
-                using var reader = new StreamReader(logStream);
-                return await reader.ReadToEndAsync();
+                var output = new StringBuilder();
+                var buffer = new byte[1024];
+                var readResult = await multiplexedStream.ReadOutputAsync(buffer, 0, buffer.Length, CancellationToken.None);
+
+                while (readResult.Count > 0)
+                {
+                    output.Append(Encoding.UTF8.GetString(buffer, 0, readResult.Count));
+                    readResult = await multiplexedStream.ReadOutputAsync(buffer, 0, buffer.Length, CancellationToken.None);
+                }
+
+                return output.ToString();
             }
             catch (DockerApiException ex)
             {
@@ -377,6 +389,56 @@ namespace DevSocial.API.Services
             {
                 throw new Exception($"Failed to execute command in container: {ex.Message}");
             }
+        }
+
+        public async Task<List<ContainerDetailsDto>> GetContainersDetails()
+        {
+            var containers = await _dockerClient.Containers.ListContainersAsync(
+                new ContainersListParameters { All = true });
+
+            var containerDetails = new List<ContainerDetailsDto>();
+
+            foreach (var container in containers)
+            {
+                var inspection = await _dockerClient.Containers.InspectContainerAsync(container.ID);
+                
+                var details = new ContainerDetailsDto
+                {
+                    Id = container.ID,
+                    Name = container.Names.FirstOrDefault()?.TrimStart('/') ?? string.Empty,
+                    Image = container.Image,
+                    Status = container.Status,
+                    State = container.State,
+                    Created = container.Created,
+                    Command = string.Join(" ", container.Command),
+                    Labels = container.Labels != null ? new Dictionary<string, string>(container.Labels) : new Dictionary<string, string>()
+                };
+
+                // Extract port mappings
+                if (container.Ports != null)
+                {
+                    foreach (var port in container.Ports)
+                    {
+                        if (port.PublicPort > 0)
+                        {
+                            details.PortMappings[$"{port.PrivatePort}/{port.Type}"] = port.PublicPort.ToString();
+                        }
+                    }
+                }
+
+                // Extract network information
+                if (inspection.NetworkSettings?.Networks != null)
+                {
+                    foreach (var network in inspection.NetworkSettings.Networks)
+                    {
+                        details.Networks[network.Key] = network.Value.IPAddress ?? string.Empty;
+                    }
+                }
+
+                containerDetails.Add(details);
+            }
+
+            return containerDetails;
         }
     }
 } 

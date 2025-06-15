@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using DevSocial.API.DTOs;
 
 namespace DevSocial.API.Controllers
 {
@@ -55,6 +56,13 @@ namespace DevSocial.API.Controllers
             {
                 return BadRequest(new { error = ex.Message });
             }
+        }
+
+        [HttpGet("containers")]
+        public async Task<ActionResult<List<ContainerDetailsDto>>> GetContainersDetails()
+        {
+            var containers = await _deploymentService.GetContainersDetails();
+            return Ok(containers);
         }
     }
 

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using DevSocial.API.DTOs;
 
 namespace DevSocial.API.Services
 {
@@ -8,6 +9,7 @@ namespace DevSocial.API.Services
         Task<DeploymentResult> DeployProject(string githubUrl, string dockerfile, Dictionary<string, string> portMappings);
         Task<string> GetContainerLogs(string containerId);
         Task<CommandResult> ExecuteCommand(string containerId, string command);
+        Task<List<ContainerDetailsDto>> GetContainersDetails();
     }
 
     public class DeploymentResult
