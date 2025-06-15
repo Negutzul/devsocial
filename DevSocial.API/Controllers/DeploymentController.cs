@@ -44,11 +44,30 @@ namespace DevSocial.API.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpPost("execute/{containerId}")]
+        public async Task<IActionResult> ExecuteCommand(string containerId, [FromBody] CommandRequest request)
+        {
+            try
+            {
+                var result = await _deploymentService.ExecuteCommand(containerId, request.Command);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 
     public class DeploymentRequest
     {
         public string GithubUrl { get; set; }
         public string Dockerfile { get; set; }
+    }
+
+    public class CommandRequest
+    {
+        public string Command { get; set; }
     }
 } 

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using System.Threading;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace DevSocial.API.Services
 {
@@ -344,6 +345,38 @@ CMD [""npm"", ""start""]";
             catch (DockerApiException ex)
             {
                 throw new Exception($"Failed to get container logs: {ex.Message}");
+            }
+        }
+
+        public async Task<CommandResult> ExecuteCommand(string containerId, string command)
+        {
+            try
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "docker",
+                    Arguments = $"exec {containerId} /bin/bash -c \"{command.Replace("\"", "\\\"")}\"",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                using var process = Process.Start(startInfo);
+                var output = await process.StandardOutput.ReadToEndAsync();
+                var error = await process.StandardError.ReadToEndAsync();
+                await process.WaitForExitAsync();
+
+                return new CommandResult
+                {
+                    Output = output,
+                    Error = error,
+                    ExitCode = process.ExitCode
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to execute command in container: {ex.Message}");
             }
         }
     }
