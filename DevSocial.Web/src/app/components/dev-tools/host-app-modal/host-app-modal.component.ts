@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DeploymentService } from '../../../services/deployment.service';
+import { DeploymentService, DeploymentResult } from '../../../services/deployment.service';
 
 @Component({
   selector: 'app-host-app-modal',
@@ -15,8 +15,9 @@ export class HostAppModalComponent {
   
   githubUrl: string = '';
   dockerfile: string = '';
+  portMappings: { [key: string]: string } = {};
   isSubmitting: boolean = false;
-  deploymentResult: any = null;
+  deploymentResult: DeploymentResult | null = null;
   error: string = '';
 
   constructor(private deploymentService: DeploymentService) {}
@@ -28,13 +29,14 @@ export class HostAppModalComponent {
 
     this.deploymentService.deployProject({
       githubUrl: this.githubUrl,
-      dockerfile: this.dockerfile
+      dockerfile: this.dockerfile,
+      portMappings: this.portMappings
     }).subscribe({
-      next: (result) => {
+      next: (result: DeploymentResult) => {
         this.deploymentResult = result;
         this.isSubmitting = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         this.error = err.error?.error || 'An error occurred during deployment';
         this.isSubmitting = false;
       }
