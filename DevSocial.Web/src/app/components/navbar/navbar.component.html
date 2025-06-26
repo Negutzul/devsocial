@@ -94,7 +94,6 @@
     <div class="navbar-links" [class.active]="isMenuOpen">
       <ng-container *ngIf="isLoggedIn(); else authLinks">
         <a routerLink="/feed" routerLinkActive="active">Feed</a>
-        <a routerLink="/explore" routerLinkActive="active">Explore</a>
         <a routerLink="/messages" routerLinkActive="active">Messages</a>
         <a routerLink="/dev-tools" routerLinkActive="active">Dev Tools</a>
         <a routerLink="/profile" routerLinkActive="active">Profile</a>

@@ -24,10 +24,58 @@
           id="dockerfile" 
           [(ngModel)]="dockerfile" 
           name="dockerfile"
-          placeholder="FROM node:latest&#10;WORKDIR /app&#10;COPY . .&#10;RUN npm install&#10;EXPOSE 3000&#10;CMD ['npm', 'start']"
+          placeholder="FROM node:18&#10;WORKDIR /app&#10;COPY package*.json ./&#10;RUN npm install&#10;COPY . .&#10;EXPOSE 4200&#10;CMD [&quot;npm&quot;, &quot;start&quot;]"
           rows="10"
           required
         ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Port Mappings</label>
+        <div class="port-mappings-container">
+          @for (mapping of portMappings; track mapping.id) {
+            <div class="port-mapping-row">
+              <div class="port-input-group">
+                <input 
+                  type="number" 
+                  [(ngModel)]="mapping.hostPort" 
+                  [name]="'hostPort' + mapping.id"
+                  placeholder="Host Port"
+                  min="1"
+                  max="65535"
+                  class="port-input"
+                  (ngModelChange)="mapping.hostPort = $event?.toString() || ''"
+                >
+                <span class="port-separator">→</span>
+                <input 
+                  type="number" 
+                  [(ngModel)]="mapping.containerPort" 
+                  [name]="'containerPort' + mapping.id"
+                  placeholder="Container Port"
+                  min="1"
+                  max="65535"
+                  class="port-input"
+                  (ngModelChange)="mapping.containerPort = $event?.toString() || ''"
+                >
+                <button 
+                  type="button" 
+                  class="remove-port-btn" 
+                  (click)="removePortMapping(mapping.id)"
+                  title="Remove port mapping"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          }
+          <button 
+            type="button" 
+            class="add-port-btn" 
+            (click)="addPortMapping()"
+          >
+            + Add Port Mapping
+          </button>
+        </div>
       </div>
 
       <div class="error-message" *ngIf="error">
