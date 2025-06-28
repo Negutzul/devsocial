@@ -10,11 +10,11 @@
       <button class="tool-button" (click)="openHostModal()">Get Started</button>
     </div>
 
-    <div class="tool-card coming-soon">
+    <div class="tool-card">
       <div class="tool-icon">⚡</div>
-      <h2>Coming Soon</h2>
-      <p>More powerful tools are on the way</p>
-      <button class="tool-button" disabled>Coming Soon</button>
+      <h2>Container Details</h2>
+      <p>View detailed information about all running containers</p>
+      <button class="tool-button" (click)="openContainerDetailsModal()">View Containers</button>
     </div>
 
     <div class="tool-card coming-soon">
@@ -26,4 +26,5 @@
   </div>
 
   <app-host-app-modal *ngIf="showHostModal" (close)="closeHostModal()"></app-host-app-modal>
+  <app-container-details-modal *ngIf="showContainerDetailsModal" (close)="closeContainerDetailsModal()"></app-container-details-modal>
 </div> 

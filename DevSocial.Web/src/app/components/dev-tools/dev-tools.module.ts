@@ -5,9 +5,10 @@ import { DevToolsComponent } from './dev-tools.component';
 
 @NgModule({
   declarations: [
-    DevToolsComponent
+    
   ],
   imports: [
+    DevToolsComponent,
     CommonModule,
     RouterModule.forChild([
       { path: '', component: DevToolsComponent }

@@ -51,7 +51,6 @@ export class HostAppModalComponent {
     // Convert literal \n strings to actual newlines
     cleaned = cleaned.replace(/\\n/g, '\n');
     
-    console.log('After cleaning:', cleaned);
     return cleaned;
   }
 
@@ -78,8 +77,6 @@ export class HostAppModalComponent {
       portMappings: portMappingsObject
     };
 
-    // Debug: Log the final request body
-    console.log('Request body:', requestBody);
 
     this.deploymentService.deployProject(requestBody).subscribe({
       next: (result: DeploymentResult) => {

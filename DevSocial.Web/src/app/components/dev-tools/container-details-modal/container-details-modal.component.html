@@ -1,0 +1,107 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Container Details</h2>
+      <div class="header-actions">
+        <button class="refresh-button" (click)="refreshContainers()" title="Refresh">
+          🔄
+        </button>
+        <button class="close-button" (click)="onClose()">&times;</button>
+      </div>
+    </div>
+    
+    <div class="modal-body">
+      <div *ngIf="isLoading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading container details...</p>
+      </div>
+
+      <div *ngIf="error" class="error-message">
+        <p>{{ error }}</p>
+        <button class="retry-button" (click)="refreshContainers()">Retry</button>
+      </div>
+
+      <div *ngIf="!isLoading && !error && containers.length === 0" class="no-containers">
+        <p>No containers found</p>
+      </div>
+
+      <div *ngIf="!isLoading && !error && containers.length > 0" class="containers-list">
+        <div *ngFor="let container of containers" class="container-card">
+          <div class="container-header">
+            <div class="container-name">
+              <h3>{{ container.name }}</h3>
+              <div class="container-id-section">
+                <span class="container-id">{{ container.id.substring(0, 12) }}...</span>
+                <button 
+                  class="copy-button" 
+                  (click)="copyToClipboard(container.id)"
+                  title="Copy full container ID"
+                >
+                  📋
+                </button>
+              </div>
+            </div>
+            <div class="container-status">
+              <span class="status-badge" [ngClass]="getStatusClass(container.status)">
+                {{ container.state }}
+              </span>
+            </div>
+          </div>
+
+          <div class="container-details">
+            <div class="detail-row">
+              <span class="detail-label">Image:</span>
+              <span class="detail-value">{{ container.image }}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="detail-label">Status:</span>
+              <span class="detail-value">{{ container.status }}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="detail-label">Created:</span>
+              <span class="detail-value">{{ formatDate(container.created) }}</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="detail-label">Command:</span>
+              <span class="detail-value command">{{ container.command }}</span>
+            </div>
+
+            <div *ngIf="container.portMappings && Object.keys(container.portMappings).length > 0" class="detail-section">
+              <span class="detail-label">Port Mappings:</span>
+              <div class="port-mappings">
+                <div *ngFor="let mapping of container.portMappings | keyvalue" class="port-mapping">
+                  <span class="host-port">{{ mapping.key }}</span>
+                  <span class="arrow">→</span>
+                  <span class="container-port">{{ mapping.value }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="container.networks && Object.keys(container.networks).length > 0" class="detail-section">
+              <span class="detail-label">Networks:</span>
+              <div class="networks">
+                <div *ngFor="let network of container.networks | keyvalue" class="network">
+                  <span class="network-name">{{ network.key }}</span>
+                  <span class="network-ip">{{ network.value }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="container.labels && Object.keys(container.labels).length > 0" class="detail-section">
+              <span class="detail-label">Labels:</span>
+              <div class="labels">
+                <div *ngFor="let label of container.labels | keyvalue" class="label">
+                  <span class="label-key">{{ label.key }}</span>
+                  <span class="label-value">{{ label.value }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
