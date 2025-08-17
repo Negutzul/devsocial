@@ -1,0 +1,123 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Interact with Container</h2>
+      <button class="close-button" (click)="onClose()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- Container ID Input -->
+      <div class="input-section">
+        <div class="form-group">
+          <label for="containerId">Container ID</label>
+          <div class="input-with-button">
+            <input 
+              type="text" 
+              id="containerId" 
+              [(ngModel)]="containerId" 
+              name="containerId"
+              placeholder="Enter container ID (e.g., 8e2da7b7c4e8...)"
+              class="container-id-input"
+            >
+            <button 
+              class="paste-button" 
+              (click)="pasteFromClipboard()"
+              title="Paste from clipboard"
+            >
+              📋
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <!-- Logs Section -->
+      <div class="section">
+        <div class="section-header">
+          <h3>Container Logs</h3>
+          <div class="section-actions">
+            <button 
+              class="action-button" 
+              (click)="getLogs()" 
+              [disabled]="isLoadingLogs || !containerId.trim()"
+            >
+              {{ isLoadingLogs ? 'Loading...' : 'Get Logs' }}
+            </button>
+            <button 
+              class="clear-button" 
+              (click)="clearLogs()" 
+              [disabled]="!logs"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+        
+        <div *ngIf="logs" class="logs-container">
+          <pre class="logs-content">{{ logs }}</pre>
+        </div>
+        
+        <div *ngIf="!logs && !isLoadingLogs" class="empty-state">
+          <p>No logs loaded. Enter a container ID and click "Get Logs" to view container logs.</p>
+        </div>
+      </div>
+
+      <!-- Command Execution Section -->
+      <div class="section">
+        <div class="section-header">
+          <h3>Execute Command</h3>
+        </div>
+        
+        <div class="command-form">
+          <div class="form-group">
+            <label for="command">Command</label>
+            <input 
+              type="text" 
+              id="command" 
+              [(ngModel)]="command" 
+              name="command"
+              placeholder="Enter command (e.g., ls -la, pwd, whoami)"
+              class="command-input"
+            >
+          </div>
+          
+          <button 
+            class="execute-button" 
+            (click)="executeCommand()" 
+            [disabled]="isLoadingCommand || !containerId.trim() || !command.trim()"
+          >
+            {{ isLoadingCommand ? 'Executing...' : 'Execute' }}
+          </button>
+        </div>
+
+        <!-- Command Result -->
+        <div *ngIf="commandResult" class="command-result">
+          <div class="result-header">
+            <h4>Command Result</h4>
+            <button class="clear-button" (click)="clearCommandResult()">Clear</button>
+          </div>
+          
+          <div class="result-content">
+            <div *ngIf="commandResult.output" class="output-section">
+              <h5>Output:</h5>
+              <pre class="output-content">{{ commandResult.output }}</pre>
+            </div>
+            
+            <div *ngIf="commandResult.error" class="error-section">
+              <h5>Error:</h5>
+              <pre class="error-content">{{ commandResult.error }}</pre>
+            </div>
+            
+            <div class="exit-code">
+              <strong>Exit Code:</strong> {{ commandResult.exitCode }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

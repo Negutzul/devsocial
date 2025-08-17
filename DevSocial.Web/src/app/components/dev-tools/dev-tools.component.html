@@ -17,14 +17,15 @@
       <button class="tool-button" (click)="openContainerDetailsModal()">View Containers</button>
     </div>
 
-    <div class="tool-card coming-soon">
+    <div class="tool-card">
       <div class="tool-icon">🔧</div>
-      <h2>Coming Soon</h2>
-      <p>More powerful tools are on the way</p>
-      <button class="tool-button" disabled>Coming Soon</button>
+      <h2>Interact with Container</h2>
+      <p>View logs and execute commands on specific containers</p>
+      <button class="tool-button" (click)="openInteractContainerModal()">Interact</button>
     </div>
   </div>
 
   <app-host-app-modal *ngIf="showHostModal" (close)="closeHostModal()"></app-host-app-modal>
   <app-container-details-modal *ngIf="showContainerDetailsModal" (close)="closeContainerDetailsModal()"></app-container-details-modal>
+  <app-interact-container-modal *ngIf="showInteractContainerModal" (close)="closeInteractContainerModal()"></app-interact-container-modal>
 </div> 
