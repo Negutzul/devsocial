@@ -33,7 +33,7 @@ export class DeploymentService {
   }
 
   executeCommand(containerId: string, command: string): Observable<CommandResult> {
-    return this.http.post<CommandResult>(`${this.apiUrl}/execute`, { containerId, command });
+    return this.http.post<CommandResult>(`${this.apiUrl}/execute/${containerId}`, { containerId, command });
   }
 
   getContainersDetails(): Observable<ContainerDetails[]> {
