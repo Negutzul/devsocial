@@ -28,8 +28,8 @@ export class DeploymentService {
     return this.http.post<DeploymentResult>(`${this.apiUrl}/deploy`, request);
   }
 
-  getContainerLogs(containerId: string): Observable<string> {
-    return this.http.get<string>(`${this.apiUrl}/logs/${containerId}`);
+  getContainerLogs(containerId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/logs/${containerId}`);
   }
 
   executeCommand(containerId: string, command: string): Observable<CommandResult> {

@@ -42,10 +42,11 @@ export class InteractContainerModalComponent {
     this.logs = '';
 
     this.deploymentService.getContainerLogs(this.containerId.trim()).subscribe({
-      next: (logs: string) => {
-        this.logs = logs;
+      next: (response: any) => {
+        // Extract logs from the JSON response
+        this.logs = response.logs || response;  
         this.isLoadingLogs = false;
-      },
+      },        
       error: (err: any) => {
         this.error = err.error?.error || 'Failed to get container logs';
         this.isLoadingLogs = false;
