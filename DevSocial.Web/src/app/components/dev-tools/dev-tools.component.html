@@ -1,7 +1,7 @@
 <div class="dev-tools-container">
   <h1 class="title">Developer Tools</h1>
   <p class="subtitle">Powerful tools to enhance your development workflow</p>
-  
+
   <div class="tools-grid">
     <div class="tool-card">
       <div class="tool-icon">🚀</div>
@@ -23,9 +23,19 @@
       <p>View logs and execute commands on specific containers</p>
       <button class="tool-button" (click)="openInteractContainerModal()">Interact</button>
     </div>
+
+    <div class="tool-card">
+      <div class="tool-icon">🗂️</div>
+      <h2>Git Repository Manager</h2>
+      <p>Browse repos, manage branches, pull requests, and compare changes</p>
+      <button class="tool-button" (click)="openFgpModal()">Manage Repos</button>
+    </div>
   </div>
 
   <app-host-app-modal *ngIf="showHostModal" (close)="closeHostModal()"></app-host-app-modal>
-  <app-container-details-modal *ngIf="showContainerDetailsModal" (close)="closeContainerDetailsModal()"></app-container-details-modal>
-  <app-interact-container-modal *ngIf="showInteractContainerModal" (close)="closeInteractContainerModal()"></app-interact-container-modal>
-</div> 
+  <app-container-details-modal *ngIf="showContainerDetailsModal"
+    (close)="closeContainerDetailsModal()"></app-container-details-modal>
+  <app-interact-container-modal *ngIf="showInteractContainerModal"
+    (close)="closeInteractContainerModal()"></app-interact-container-modal>
+  <app-fgp-modal *ngIf="showFgpModal" (close)="closeFgpModal()"></app-fgp-modal>
+</div>

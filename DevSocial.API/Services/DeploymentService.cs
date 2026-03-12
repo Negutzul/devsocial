@@ -130,8 +130,7 @@ namespace DevSocial.API.Services
         {
             var cloneOptions = new CloneOptions
             {
-                Checkout = true,
-                FetchOptions = new FetchOptions()
+                Checkout = true
             };
 
             Repository.Clone(url, path, cloneOptions);

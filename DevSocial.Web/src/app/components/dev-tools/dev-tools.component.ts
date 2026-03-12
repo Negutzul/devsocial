@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { HostAppModalComponent } from './host-app-modal/host-app-modal.component';
 import { ContainerDetailsModalComponent } from './container-details-modal/container-details-modal.component';
 import { InteractContainerModalComponent } from './interact-container-modal/interact-container-modal.component';
+import { FgpModalComponent } from './fgp-modal/fgp-modal.component';
 
 @Component({
   selector: 'app-dev-tools',
   standalone: true,
-  imports: [CommonModule, HostAppModalComponent, ContainerDetailsModalComponent, InteractContainerModalComponent],
+  imports: [CommonModule, HostAppModalComponent, ContainerDetailsModalComponent, InteractContainerModalComponent, FgpModalComponent],
   templateUrl: './dev-tools.component.html',
   styleUrls: ['./dev-tools.component.css']
 })
@@ -15,6 +16,7 @@ export class DevToolsComponent {
   showHostModal = false;
   showContainerDetailsModal = false;
   showInteractContainerModal = false;
+  showFgpModal = false;
 
   openHostModal() {
     this.showHostModal = true;
@@ -38,5 +40,13 @@ export class DevToolsComponent {
 
   closeInteractContainerModal() {
     this.showInteractContainerModal = false;
+  }
+
+  openFgpModal() {
+    this.showFgpModal = true;
+  }
+
+  closeFgpModal() {
+    this.showFgpModal = false;
   }
 } 

@@ -1,0 +1,220 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content fgp-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>🗂️ Git Repository Manager</h2>
+      <button class="close-btn" (click)="onClose()">&times;</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button [class.active]="activeTab === 'repos'" (click)="switchTab('repos')">Repositories</button>
+      <button [class.active]="activeTab === 'browse'" (click)="switchTab('browse')">Browse</button>
+      <button [class.active]="activeTab === 'prs'" (click)="switchTab('prs')">Pull Requests</button>
+      <button [class.active]="activeTab === 'compare'" (click)="switchTab('compare')">Compare</button>
+    </div>
+
+    <!-- ===== REPOS TAB ===== -->
+    <div class="tab-content" *ngIf="activeTab === 'repos'">
+      <div class="create-row">
+        <input type="text" [(ngModel)]="newRepoName" placeholder="New repository name..."
+          (keyup.enter)="createRepo()" />
+        <button class="btn btn-primary" (click)="createRepo()" [disabled]="!newRepoName.trim()">+ Create</button>
+      </div>
+
+      <div class="loading" *ngIf="reposLoading">Loading repositories...</div>
+      <div class="error-msg" *ngIf="reposError">{{ reposError }}</div>
+
+      <div class="list" *ngIf="!reposLoading">
+        <div class="list-item" *ngFor="let repo of repos">
+          <div class="list-item-info">
+            <span class="item-icon">📁</span>
+            <span class="item-name">{{ repo }}</span>
+          </div>
+          <div class="list-item-actions">
+            <button class="btn btn-sm" (click)="selectRepoForBrowse(repo); switchTab('browse')">Browse</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteRepo(repo)">Delete</button>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="repos.length === 0">No repositories yet. Create one above!</div>
+      </div>
+    </div>
+
+    <!-- ===== BROWSE TAB ===== -->
+    <div class="tab-content" *ngIf="activeTab === 'browse'">
+      <!-- Repo selection -->
+      <div *ngIf="!selectedRepo" class="list">
+        <p class="section-label">Select a repository:</p>
+        <div class="list-item clickable" *ngFor="let repo of repos" (click)="selectRepoForBrowse(repo)">
+          <span class="item-icon">📁</span>
+          <span class="item-name">{{ repo }}</span>
+        </div>
+      </div>
+
+      <!-- Branch selection -->
+      <div *ngIf="selectedRepo && !selectedBranch">
+        <div class="breadcrumb">
+          <span class="breadcrumb-link" (click)="selectedRepo = ''">Repos</span>
+          <span class="breadcrumb-sep">/</span>
+          <span>{{ selectedRepo }}</span>
+        </div>
+        <p class="section-label">Select a branch:</p>
+        <div class="loading" *ngIf="browseLoading">Loading branches...</div>
+        <div class="list" *ngIf="!browseLoading">
+          <div class="list-item clickable" *ngFor="let branch of branches" (click)="selectBranch(branch.name)">
+            <span class="item-icon">🌿</span>
+            <span class="item-name">{{ branch.name }}</span>
+            <span class="badge" *ngIf="branch.isHead">HEAD</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- File tree -->
+      <div *ngIf="selectedRepo && selectedBranch && !viewingFile">
+        <div class="breadcrumb">
+          <span class="breadcrumb-link" (click)="selectedRepo = ''; selectedBranch = ''">Repos</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-link" (click)="selectedBranch = ''">{{ selectedRepo }}</span>
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-link" (click)="currentPath = []; loadTree()">{{ selectedBranch }}</span>
+          <ng-container *ngFor="let segment of currentPath; let i = index">
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-link" (click)="navigateToPathIndex(i)">{{ segment }}</span>
+          </ng-container>
+        </div>
+
+        <div class="loading" *ngIf="browseLoading">Loading...</div>
+        <div class="list" *ngIf="!browseLoading">
+          <div class="list-item clickable" *ngIf="currentPath.length > 0" (click)="navigateUp()">
+            <span class="item-icon">⬆️</span>
+            <span class="item-name">..</span>
+          </div>
+          <div class="list-item clickable" *ngFor="let entry of treeEntries"
+            (click)="entry.type === 'tree' ? navigateToFolder(entry) : viewFile(entry)">
+            <span class="item-icon">{{ entry.type === 'tree' ? '📂' : '📄' }}</span>
+            <span class="item-name">{{ entry.name }}</span>
+            <span class="item-size" *ngIf="entry.type !== 'tree' && entry.size">{{ entry.size }} B</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- File content -->
+      <div *ngIf="viewingFile">
+        <div class="breadcrumb">
+          <button class="btn btn-sm" (click)="backToTree()">← Back</button>
+        </div>
+        <pre class="file-viewer">{{ fileContent }}</pre>
+      </div>
+    </div>
+
+    <!-- ===== PRS TAB ===== -->
+    <div class="tab-content" *ngIf="activeTab === 'prs'">
+      <div class="section-header">
+        <button class="btn btn-primary" (click)="toggleCreatePr()">
+          {{ showCreatePr ? 'Cancel' : '+ New Pull Request' }}
+        </button>
+      </div>
+
+      <!-- Create PR form -->
+      <div class="create-pr-form" *ngIf="showCreatePr">
+        <input type="text" [(ngModel)]="newPrTitle" placeholder="PR Title" />
+        <div class="pr-branch-row">
+          <select [(ngModel)]="newPrSource">
+            <option value="" disabled>Source branch</option>
+            <option *ngFor="let b of prBranches" [value]="b.name">{{ b.name }}</option>
+          </select>
+          <span class="arrow">→</span>
+          <select [(ngModel)]="newPrTarget">
+            <option value="" disabled>Target branch</option>
+            <option *ngFor="let b of prBranches" [value]="b.name">{{ b.name }}</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" (click)="submitPr()"
+          [disabled]="!newPrTitle || !newPrSource || !newPrTarget">Create PR</button>
+      </div>
+
+      <div class="loading" *ngIf="prsLoading">Loading pull requests...</div>
+
+      <div class="list" *ngIf="!prsLoading">
+        <div *ngFor="let pr of pullRequests" class="pr-card">
+          <div class="pr-header" (click)="viewPrComments(pr.id)">
+            <div class="pr-info">
+              <span class="pr-title">#{{ pr.id }} {{ pr.title }}</span>
+              <span class="pr-branches">{{ pr.sourceBranch }} → {{ pr.targetBranch }}</span>
+            </div>
+            <div class="pr-actions">
+              <span class="badge" [class.badge-open]="pr.status === 'Open'"
+                [class.badge-merged]="pr.status === 'Merged'">{{ pr.status }}</span>
+              <button class="btn btn-sm btn-primary" *ngIf="pr.status === 'Open'"
+                (click)="mergePr(pr.id); $event.stopPropagation()">Merge</button>
+            </div>
+          </div>
+
+          <!-- Comments section -->
+          <div class="comments-section" *ngIf="selectedPrId === pr.id">
+            <div class="comment" *ngFor="let comment of prComments">
+              <div class="comment-header">
+                <strong>{{ comment.author }}</strong>
+                <span class="comment-date">{{ comment.createdAt | date:'short' }}</span>
+              </div>
+              <p class="comment-body">{{ comment.content }}</p>
+            </div>
+            <div class="empty-state" *ngIf="prComments.length === 0">No comments yet.</div>
+            <div class="add-comment">
+              <input type="text" [(ngModel)]="newCommentAuthor" placeholder="Your name" />
+              <textarea [(ngModel)]="newCommentContent" placeholder="Add a comment..." rows="2"></textarea>
+              <button class="btn btn-sm btn-primary" (click)="addComment()">Comment</button>
+            </div>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="pullRequests.length === 0">No pull requests yet.</div>
+      </div>
+    </div>
+
+    <!-- ===== COMPARE TAB ===== -->
+    <div class="tab-content" *ngIf="activeTab === 'compare'">
+      <div class="compare-form">
+        <select [(ngModel)]="compareRepo" (ngModelChange)="selectRepoForCompare($event)">
+          <option value="" disabled>Select repository</option>
+          <option *ngFor="let repo of repos" [value]="repo">{{ repo }}</option>
+        </select>
+        <div class="pr-branch-row" *ngIf="compareRepo">
+          <select [(ngModel)]="sourceCompare">
+            <option value="" disabled>Source branch</option>
+            <option *ngFor="let b of compareBranches" [value]="b.name">{{ b.name }}</option>
+          </select>
+          <span class="arrow">vs</span>
+          <select [(ngModel)]="targetCompare">
+            <option value="" disabled>Target branch</option>
+            <option *ngFor="let b of compareBranches" [value]="b.name">{{ b.name }}</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" (click)="runComparison()"
+          [disabled]="!compareRepo || !sourceCompare || !targetCompare || compareLoading">
+          {{ compareLoading ? 'Comparing...' : 'Compare' }}
+        </button>
+      </div>
+
+      <div class="error-msg" *ngIf="compareError">{{ compareError }}</div>
+
+      <div class="comparison-result" *ngIf="comparison">
+        <div class="comparison-stats">
+          <span class="stat">📝 {{ comparison.filesChanged }} files changed</span>
+          <span class="stat">🔀 {{ comparison.commitCount }} unique commits</span>
+        </div>
+
+        <div class="diff-list">
+          <div class="diff-item" *ngFor="let file of comparison.files">
+            <div class="diff-header">
+              <span class="badge" [ngClass]="{
+                'badge-added': file.changeKind === 'Added',
+                'badge-deleted': file.changeKind === 'Deleted',
+                'badge-modified': file.changeKind === 'Modified'
+              }">{{ file.changeKind }}</span>
+              <span class="diff-path">{{ file.path }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
