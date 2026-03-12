@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
     FgpService,
-    BranchInfo,
     CommitInfo,
     TreeEntry,
     BranchComparison,
@@ -31,7 +30,7 @@ export class FgpModalComponent implements OnInit {
 
     // Browse tab
     selectedRepo = '';
-    branches: BranchInfo[] = [];
+    branches: string[] = [];
     selectedBranch = '';
     treeEntries: TreeEntry[] = [];
     currentPath: string[] = [];
@@ -46,7 +45,7 @@ export class FgpModalComponent implements OnInit {
     newPrTitle = '';
     newPrSource = '';
     newPrTarget = '';
-    prBranches: BranchInfo[] = [];
+    prBranches: string[] = [];
     selectedPrId: number | null = null;
     prComments: PrComment[] = [];
     newCommentAuthor = '';
@@ -54,7 +53,7 @@ export class FgpModalComponent implements OnInit {
 
     // Compare tab
     compareRepo = '';
-    compareBranches: BranchInfo[] = [];
+    compareBranches: string[] = [];
     sourceCompare = '';
     targetCompare = '';
     comparison: BranchComparison | null = null;
@@ -230,11 +229,22 @@ export class FgpModalComponent implements OnInit {
 
     // ===== COMPARE TAB =====
 
+    expandedFiles = new Set<string>();
+
+    toggleFileDiff(path: string) {
+        if (this.expandedFiles.has(path)) {
+            this.expandedFiles.delete(path);
+        } else {
+            this.expandedFiles.add(path);
+        }
+    }
+
     selectRepoForCompare(repoName: string) {
         this.compareRepo = repoName;
         this.sourceCompare = '';
         this.targetCompare = '';
         this.comparison = null;
+        this.expandedFiles.clear();
         this.fgp.getBranches(repoName).subscribe({
             next: (branches) => this.compareBranches = branches
         });
@@ -244,6 +254,7 @@ export class FgpModalComponent implements OnInit {
         if (!this.compareRepo || !this.sourceCompare || !this.targetCompare) return;
         this.compareLoading = true;
         this.compareError = '';
+        this.expandedFiles.clear();
         this.fgp.compareBranches(this.compareRepo, this.sourceCompare, this.targetCompare).subscribe({
             next: (result) => { this.comparison = result; this.compareLoading = false; },
             error: (err) => { this.compareError = err.error || 'Comparison failed'; this.compareLoading = false; }

@@ -45,8 +45,10 @@
       <div *ngIf="!selectedRepo" class="list">
         <p class="section-label">Select a repository:</p>
         <div class="list-item clickable" *ngFor="let repo of repos" (click)="selectRepoForBrowse(repo)">
-          <span class="item-icon">📁</span>
-          <span class="item-name">{{ repo }}</span>
+          <div class="list-item-info">
+            <span class="item-icon">📁</span>
+            <span class="item-name">{{ repo }}</span>
+          </div>
         </div>
       </div>
 
@@ -60,10 +62,11 @@
         <p class="section-label">Select a branch:</p>
         <div class="loading" *ngIf="browseLoading">Loading branches...</div>
         <div class="list" *ngIf="!browseLoading">
-          <div class="list-item clickable" *ngFor="let branch of branches" (click)="selectBranch(branch.name)">
-            <span class="item-icon">🌿</span>
-            <span class="item-name">{{ branch.name }}</span>
-            <span class="badge" *ngIf="branch.isHead">HEAD</span>
+          <div class="list-item clickable" *ngFor="let branch of branches" (click)="selectBranch(branch)">
+            <div class="list-item-info">
+              <span class="item-icon">🌿</span>
+              <span class="item-name">{{ branch }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -89,10 +92,12 @@
             <span class="item-name">..</span>
           </div>
           <div class="list-item clickable" *ngFor="let entry of treeEntries"
-            (click)="entry.type === 'tree' ? navigateToFolder(entry) : viewFile(entry)">
-            <span class="item-icon">{{ entry.type === 'tree' ? '📂' : '📄' }}</span>
-            <span class="item-name">{{ entry.name }}</span>
-            <span class="item-size" *ngIf="entry.type !== 'tree' && entry.size">{{ entry.size }} B</span>
+            (click)="entry.type === 'Tree' ? navigateToFolder(entry) : viewFile(entry)">
+            <div class="list-item-info">
+              <span class="item-icon">{{ entry.type === 'Tree' ? '📂' : '📄' }}</span>
+              <span class="item-name">{{ entry.name }}</span>
+            </div>
+            <span class="item-size" *ngIf="entry.type !== 'Tree' && entry.size">{{ entry.size }} B</span>
           </div>
         </div>
       </div>
@@ -120,12 +125,12 @@
         <div class="pr-branch-row">
           <select [(ngModel)]="newPrSource">
             <option value="" disabled>Source branch</option>
-            <option *ngFor="let b of prBranches" [value]="b.name">{{ b.name }}</option>
+            <option *ngFor="let b of prBranches" [value]="b">{{ b }}</option>
           </select>
           <span class="arrow">→</span>
           <select [(ngModel)]="newPrTarget">
             <option value="" disabled>Target branch</option>
-            <option *ngFor="let b of prBranches" [value]="b.name">{{ b.name }}</option>
+            <option *ngFor="let b of prBranches" [value]="b">{{ b }}</option>
           </select>
         </div>
         <button class="btn btn-primary" (click)="submitPr()"
@@ -180,12 +185,12 @@
         <div class="pr-branch-row" *ngIf="compareRepo">
           <select [(ngModel)]="sourceCompare">
             <option value="" disabled>Source branch</option>
-            <option *ngFor="let b of compareBranches" [value]="b.name">{{ b.name }}</option>
+            <option *ngFor="let b of compareBranches" [value]="b">{{ b }}</option>
           </select>
           <span class="arrow">vs</span>
           <select [(ngModel)]="targetCompare">
             <option value="" disabled>Target branch</option>
-            <option *ngFor="let b of compareBranches" [value]="b.name">{{ b.name }}</option>
+            <option *ngFor="let b of compareBranches" [value]="b">{{ b }}</option>
           </select>
         </div>
         <button class="btn btn-primary" (click)="runComparison()"
@@ -204,13 +209,24 @@
 
         <div class="diff-list">
           <div class="diff-item" *ngFor="let file of comparison.files">
-            <div class="diff-header">
+            <div class="diff-header clickable" (click)="toggleFileDiff(file.path)">
+              <span class="diff-toggle">{{ expandedFiles.has(file.path) ? '▼' : '▶' }}</span>
               <span class="badge" [ngClass]="{
                 'badge-added': file.changeKind === 'Added',
                 'badge-deleted': file.changeKind === 'Deleted',
                 'badge-modified': file.changeKind === 'Modified'
               }">{{ file.changeKind }}</span>
               <span class="diff-path">{{ file.path }}</span>
+            </div>
+            <div class="diff-patch" *ngIf="expandedFiles.has(file.path)">
+              <div *ngFor="let line of file.patch.split('\n')"
+                   [ngClass]="{
+                     'diff-line-add': line.startsWith('+') && !line.startsWith('+++'),
+                     'diff-line-del': line.startsWith('-') && !line.startsWith('---'),
+                     'diff-line-hunk': line.startsWith('@@'),
+                     'diff-line-meta': line.startsWith('diff ') || line.startsWith('index ') || line.startsWith('---') || line.startsWith('+++')
+                   }"
+                   class="diff-line">{{ line }}</div>
             </div>
           </div>
         </div>

@@ -85,8 +85,8 @@ export class FgpService {
     }
 
     // Branch operations
-    getBranches(repoName: string): Observable<BranchInfo[]> {
-        return this.http.get<BranchInfo[]>(`${this.baseUrl}/repos/${repoName}/branches`);
+    getBranches(repoName: string): Observable<string[]> {
+        return this.http.get<string[]>(`${this.baseUrl}/repos/${repoName}/branches`);
     }
 
     // Commit operations
@@ -110,7 +110,7 @@ export class FgpService {
 
     getFileContent(repoName: string, branchName: string, filePath: string): Observable<FileContent> {
         return this.http.get<FileContent>(
-            `${this.baseUrl}/repos/${repoName}/branches/${branchName}/files/${encodeURIComponent(filePath)}`
+            `${this.baseUrl}/repos/${repoName}/branches/${branchName}/files/${filePath}`
         );
     }
 

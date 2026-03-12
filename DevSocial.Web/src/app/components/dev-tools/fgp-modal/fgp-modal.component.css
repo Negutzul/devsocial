@@ -380,10 +380,66 @@
   gap: 0.75rem;
 }
 
+.diff-header.clickable {
+  cursor: pointer;
+  transition: background 0.2s;
+  padding: 0.4rem;
+  border-radius: 4px;
+}
+
+.diff-header.clickable:hover { background: #e8f4fd; }
+
+.diff-toggle {
+  font-size: 0.7rem;
+  color: #7f8c8d;
+  width: 1rem;
+  text-align: center;
+}
+
 .diff-path {
   font-family: monospace;
   font-size: 0.85rem;
   color: #2c3e50;
+}
+
+.diff-patch {
+  background: #1e1e1e;
+  padding: 0.5rem 0;
+  border-radius: 0 0 6px 6px;
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: auto;
+  margin-top: 0.25rem;
+  border-top: 2px solid #3498db;
+}
+
+.diff-line {
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  padding: 0 0.75rem;
+  white-space: pre;
+  color: #d4d4d4;
+}
+
+.diff-line-add {
+  background: rgba(40, 167, 69, 0.2);
+  color: #85e89d;
+}
+
+.diff-line-del {
+  background: rgba(220, 53, 69, 0.2);
+  color: #f97583;
+}
+
+.diff-line-hunk {
+  color: #79b8ff;
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.diff-line-meta {
+  color: #7f8c8d;
+  font-style: italic;
 }
 
 @media (max-width: 600px) {
