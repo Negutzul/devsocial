@@ -143,21 +143,57 @@
 
       <div class="list" *ngIf="!prsLoading">
         <div *ngFor="let pr of pullRequests" class="pr-card">
-          <div class="pr-header" (click)="viewPrComments(pr.id)">
+          <div class="pr-header" (click)="viewPrComments(pr)">
             <div class="pr-info">
               <span class="pr-title">#{{ pr.id }} {{ pr.title }}</span>
               <span class="pr-branches">{{ pr.sourceBranch }} → {{ pr.targetBranch }}</span>
             </div>
             <div class="pr-actions">
-              <span class="badge" [class.badge-open]="pr.status === 'Open'"
-                [class.badge-merged]="pr.status === 'Merged'">{{ pr.status }}</span>
-              <button class="btn btn-sm btn-primary" *ngIf="pr.status === 'Open'"
+              <span class="badge" [class.badge-open]="pr.isOpen"
+                [class.badge-merged]="!pr.isOpen">{{ pr.isOpen ? 'Open' : 'Merged' }}</span>
+              <button class="btn btn-sm btn-primary" *ngIf="pr.isOpen"
                 (click)="mergePr(pr.id); $event.stopPropagation()">Merge</button>
             </div>
           </div>
 
-          <!-- Comments section -->
+          <!-- Expanded PR details -->
           <div class="comments-section" *ngIf="selectedPrId === pr.id">
+            <!-- Diff section -->
+            <div class="loading" *ngIf="prDiffLoading">Loading changes...</div>
+            <div class="error-msg" *ngIf="prDiffError">{{ prDiffError }}</div>
+            <div *ngIf="prDiff" class="pr-diff-section">
+              <div class="comparison-stats">
+                <span class="stat">📝 {{ prDiff.filesChanged }} files changed</span>
+                <span class="stat">🔀 {{ prDiff.commitCount }} commits</span>
+              </div>
+              <div class="diff-list">
+                <div class="diff-item" *ngFor="let file of prDiff.files">
+                  <div class="diff-header clickable" (click)="togglePrFileDiff(file.path)">
+                    <span class="diff-toggle">{{ expandedPrFiles.has(file.path) ? '▼' : '▶' }}</span>
+                    <span class="badge" [ngClass]="{
+                      'badge-added': file.changeKind === 'Added',
+                      'badge-deleted': file.changeKind === 'Deleted',
+                      'badge-modified': file.changeKind === 'Modified'
+                    }">{{ file.changeKind }}</span>
+                    <span class="diff-path">{{ file.path }}</span>
+                  </div>
+                  <div class="diff-patch" *ngIf="expandedPrFiles.has(file.path)">
+                    <div *ngFor="let line of file.patch.split('\n')"
+                         [ngClass]="{
+                           'diff-line-add': line.startsWith('+') && !line.startsWith('+++'),
+                           'diff-line-del': line.startsWith('-') && !line.startsWith('---'),
+                           'diff-line-hunk': line.startsWith('@@'),
+                           'diff-line-meta': line.startsWith('diff ') || line.startsWith('index ') || line.startsWith('---') || line.startsWith('+++')
+                         }"
+                         class="diff-line">{{ line }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="section-divider" *ngIf="prDiff" />
+
+            <!-- Comments -->
             <div class="comment" *ngFor="let comment of prComments">
               <div class="comment-header">
                 <strong>{{ comment.author }}</strong>

@@ -303,6 +303,16 @@
   padding: 1rem;
 }
 
+.section-divider {
+  border: none;
+  border-top: 1px solid #e9ecef;
+  margin: 1rem 0;
+}
+
+.pr-diff-section {
+  margin-bottom: 0.5rem;
+}
+
 .comment {
   background: white;
   padding: 0.75rem;

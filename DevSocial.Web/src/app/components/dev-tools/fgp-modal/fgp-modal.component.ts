@@ -51,6 +51,11 @@ export class FgpModalComponent implements OnInit {
     prComments: PrComment[] = [];
     newCommentAuthor = '';
     newCommentContent = '';
+    prDiff: BranchComparison | null = null;
+    prDiffLoading = false;
+    prDiffError = '';
+    expandedPrFiles = new Set<string>();
+    newPrRepo = '';
 
     // Compare tab
     compareRepo = '';
@@ -208,12 +213,34 @@ export class FgpModalComponent implements OnInit {
         });
     }
 
-    viewPrComments(prId: number) {
-        this.selectedPrId = this.selectedPrId === prId ? null : prId;
+    viewPrComments(pr: PullRequest) {
+        this.selectedPrId = this.selectedPrId === pr.id ? null : pr.id;
+        this.prDiff = null;
+        this.prDiffError = '';
+        this.prDiffLoading = false;
+        this.expandedPrFiles.clear();
         if (this.selectedPrId) {
-            this.fgp.getComments(prId).subscribe({
+            this.fgp.getComments(pr.id).subscribe({
                 next: (comments) => this.prComments = comments
             });
+            // Load the diff between source and target branches
+            if (pr.repoName && pr.sourceBranch && pr.targetBranch) {
+                this.prDiffLoading = true;
+                this.fgp.compareBranches(pr.repoName, pr.sourceBranch, pr.targetBranch).subscribe({
+                    next: (diff) => { this.prDiff = diff; this.prDiffLoading = false; },
+                    error: () => { this.prDiffError = 'Could not load diff — repo or branches may not exist'; this.prDiffLoading = false; }
+                });
+            } else {
+                this.prDiffError = 'No repository linked to this PR';
+            }
+        }
+    }
+
+    togglePrFileDiff(path: string) {
+        if (this.expandedPrFiles.has(path)) {
+            this.expandedPrFiles.delete(path);
+        } else {
+            this.expandedPrFiles.add(path);
         }
     }
 

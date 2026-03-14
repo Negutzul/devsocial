@@ -48,11 +48,12 @@ export interface BranchComparison {
 
 export interface PullRequest {
     id: number;
+    repoName: string;
     title: string;
+    description: string;
     sourceBranch: string;
     targetBranch: string;
-    status: string;
-    createdAt: string;
+    isOpen: boolean;
 }
 
 export interface PrComment {
