@@ -37,6 +37,7 @@ export class FgpModalComponent implements OnInit {
     fileContent = '';
     viewingFile = false;
     browseLoading = false;
+    browseError = '';
 
     // PRs tab
     pullRequests: PullRequest[] = [];
@@ -151,10 +152,11 @@ export class FgpModalComponent implements OnInit {
 
     viewFile(entry: TreeEntry) {
         this.browseLoading = true;
+        this.browseError = '';
         const filePath = [...this.currentPath, entry.name].join('/');
         this.fgp.getFileContent(this.selectedRepo, this.selectedBranch, filePath).subscribe({
             next: (file) => { this.fileContent = file.content; this.viewingFile = true; this.browseLoading = false; },
-            error: () => { this.browseLoading = false; }
+            error: (err) => { this.browseError = err.error || 'Failed to load file'; this.browseLoading = false; }
         });
     }
 

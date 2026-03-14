@@ -92,15 +92,17 @@
             <span class="item-name">..</span>
           </div>
           <div class="list-item clickable" *ngFor="let entry of treeEntries"
-            (click)="entry.type === 'Tree' ? navigateToFolder(entry) : viewFile(entry)">
+            (click)="entry.type === 'Blob' ? viewFile(entry) : navigateToFolder(entry)">
             <div class="list-item-info">
-              <span class="item-icon">{{ entry.type === 'Tree' ? '📂' : '📄' }}</span>
+              <span class="item-icon">{{ entry.type === 'Blob' ? '📄' : '📂' }}</span>
               <span class="item-name">{{ entry.name }}</span>
             </div>
-            <span class="item-size" *ngIf="entry.type !== 'Tree' && entry.size">{{ entry.size }} B</span>
+            <span class="item-size" *ngIf="entry.type === 'Blob' && entry.size">{{ entry.size }} B</span>
           </div>
         </div>
       </div>
+
+      <div class="error-msg" *ngIf="browseError">{{ browseError }}</div>
 
       <!-- File content -->
       <div *ngIf="viewingFile">
